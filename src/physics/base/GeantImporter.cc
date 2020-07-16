@@ -8,8 +8,10 @@
 #include "GeantImporter.hh"
 
 #include <iomanip>
+#include <iostream>
 
 // ROOT
+#include "TFile.h"
 #include "TTree.h"
 #include "TBranch.h"
 #include "TLeaf.h"
@@ -17,30 +19,10 @@
 namespace celeritas
 {
 //---------------------------------------------------------------------------//
-// PUBLIC
-//---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
 /*!
- * Construct with defaults
+ * Default destructor
  */
-GeantImporter::GeantImporter()
-    : rootFile_particleDef(nullptr), rootFile_physicsTable(nullptr)
-{
-}
-
-//---------------------------------------------------------------------------//
-/*!
- * Destructor
- */
-GeantImporter::~GeantImporter()
-{
-    this->rootFile_particleDef->Close();
-    this->rootFile_physicsTable->Close();
-
-    delete rootFile_particleDef;
-    delete rootFile_physicsTable;
-}
+GeantImporter::~GeantImporter() = default;
 
 //---------------------------------------------------------------------------//
 /*!
@@ -48,13 +30,14 @@ GeantImporter::~GeantImporter()
  */
 void GeantImporter::loadParticleDefRootFile(const std::string filename)
 {
-    this->rootFile_particleDef = new TFile(filename.c_str(), "open");
+    this->rootFile_particleDef
+        = std::make_unique<TFile>(filename.c_str(), "open");
 
     // Silly safeguard
     if (!rootFile_particleDef)
         return;
 
-    buildObjectsList(this->rootFile_particleDef);
+    buildObjectsList(this->rootFile_particleDef.get());
     loadParticleDefsIntoMemory();
 }
 
@@ -64,13 +47,14 @@ void GeantImporter::loadParticleDefRootFile(const std::string filename)
  */
 void GeantImporter::loadPhysicsTableRootFile(const std::string filename)
 {
-    this->rootFile_physicsTable = new TFile(filename.c_str(), "open");
+    this->rootFile_physicsTable
+        = std::make_unique<TFile>(filename.c_str(), "open");
 
     // Silly safeguard
     if (!rootFile_physicsTable)
         return;
 
-    buildObjectsList(this->rootFile_physicsTable);
+    buildObjectsList(this->rootFile_physicsTable.get());
     loadPhysicsTablesIntoMemory();
 }
 

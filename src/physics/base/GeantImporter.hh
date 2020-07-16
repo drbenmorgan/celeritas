@@ -9,17 +9,17 @@
 #define base_GeantImporter_hh
 
 // C++
-#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 #include <map>
 
-// ROOT
-#include "TFile.h"
-
 // Project
 #include "GeantParticleDef.hh"
 #include "GeantPhysicsTable.hh"
+
+// Root forward declaration
+class TFile;
 
 namespace celeritas
 {
@@ -46,17 +46,8 @@ namespace celeritas
  * &physTable); \endcode
  */
 
-class GeantImporter : G4ParticleDef, G4PhysicsTable
+class GeantImporter
 {
-  protected:
-    TFile* rootFile_particleDef;
-    TFile* rootFile_physicsTable;
-
-  public:
-    std::vector<std::string>              objectsList;
-    std::vector<G4ParticleDef>            particleVector;
-    std::map<std::string, G4PhysicsTable> physTableMap;
-
   public:
     GeantImporter();
     ~GeantImporter();
@@ -76,6 +67,14 @@ class GeantImporter : G4ParticleDef, G4PhysicsTable
     void buildObjectsList(TFile* rootFile);
     void loadPhysicsTablesIntoMemory();
     void loadParticleDefsIntoMemory();
+
+  private:
+    std::vector<std::string>              objectsList;
+    std::vector<G4ParticleDef>            particleVector;
+    std::map<std::string, G4PhysicsTable> physTableMap;
+
+    std::unique_ptr<TFile> rootFile_particleDef;
+    std::unique_ptr<TFile> rootFile_physicsTable;
 };
 
 //---------------------------------------------------------------------------//
