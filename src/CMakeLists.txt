@@ -58,6 +58,13 @@ else()
   )
 endif()
 
+if(CELERITAS_USE_ROOT)
+  list(APPEND SOURCES
+    physics/base/GeantImporter.cc
+  )
+list(APPEND PRIVATE_DEPS ROOT::Core ROOT::Tree)
+endif()
+
 add_library(celeritas ${SOURCES})
 target_link_libraries(celeritas
   PRIVATE ${PRIVATE_DEPS}

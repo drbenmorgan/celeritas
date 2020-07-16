@@ -21,13 +21,13 @@ class G4ParticleDef
 {
   protected:
     std::string name_;
-    int pdg_;
-    double mass_;
-    double charge_;
-    double spin_;
-    double lifetime_;
-    bool   isStable_;
-    
+    int         pdg_;
+    double      mass_;
+    double      charge_;
+    double      spin_;
+    double      lifetime_;
+    bool        isStable_;
+
   public:
     G4ParticleDef();
     G4ParticleDef(std::string name,
@@ -37,9 +37,9 @@ class G4ParticleDef
                   double      spin,
                   double      lifetime,
                   bool        isStable);
-    
+
     ~G4ParticleDef();
-    
+
     G4ParticleDef operator()(std::string name,
                              int         pdg,
                              double      mass,
@@ -47,7 +47,7 @@ class G4ParticleDef
                              double      spin,
                              double      lifetime,
                              bool        isStable);
-    
+
     std::string name();
     int         pdg();
     double      mass();
@@ -56,7 +56,6 @@ class G4ParticleDef
     double      lifetime();
     bool        isStable();
 };
-
 
 //---------------------------------------------------------------------------//
 } // namespace celeritas

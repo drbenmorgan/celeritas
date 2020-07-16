@@ -14,9 +14,15 @@ namespace celeritas
  * Construct with defaults
  */
 G4ParticleDef::G4ParticleDef()
-: name_("empty"), pdg_(0), mass_(0), charge_(0), spin_(0), lifetime_(0),
-  isStable_(0)
-{}
+    : name_("empty")
+    , pdg_(0)
+    , mass_(0)
+    , charge_(0)
+    , spin_(0)
+    , lifetime_(0)
+    , isStable_(0)
+{
+}
 
 //---------------------------------------------------------------------------//
 /*!
@@ -29,16 +35,21 @@ G4ParticleDef::G4ParticleDef(std::string name,
                              double      spin,
                              double      lifetime,
                              bool        isStable)
-: name_(name), pdg_(pdg), mass_(mass), charge_(charge), spin_(spin),
-lifetime_(lifetime), isStable_(isStable)
-{}
+    : name_(name)
+    , pdg_(pdg)
+    , mass_(mass)
+    , charge_(charge)
+    , spin_(spin)
+    , lifetime_(lifetime)
+    , isStable_(isStable)
+{
+}
 
 //---------------------------------------------------------------------------//
 /*!
  * Destructor
  */
-G4ParticleDef::~G4ParticleDef()
-{}
+G4ParticleDef::~G4ParticleDef() {}
 
 //---------------------------------------------------------------------------//
 /*!
@@ -59,7 +70,7 @@ G4ParticleDef G4ParticleDef::operator()(std::string name,
     this->spin_     = spin;
     this->lifetime_ = lifetime;
     this->isStable_ = isStable;
-    
+
     return *this;
 }
 

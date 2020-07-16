@@ -19,17 +19,16 @@ namespace celeritas
 
 struct G4PhysicsTable
 {
-    int tableSize_;
-    std::vector<double> edgeMin_;
-    std::vector<double> edgeMax_;
-    std::vector<int> numberOfNodes_;
-    std::vector<int> vectorType_;
+    int                              tableSize_;
+    std::vector<double>              edgeMin_;
+    std::vector<double>              edgeMax_;
+    std::vector<int>                 numberOfNodes_;
+    std::vector<int>                 vectorType_;
     std::vector<std::vector<double>> binVector_;
     std::vector<std::vector<double>> dataVector_;
 };
 
 //---------------------------------------------------------------------------//
 } // namespace celeritas
-
 
 #endif // base_G4PhysicsTable_hh

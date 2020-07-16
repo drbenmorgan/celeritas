@@ -7,8 +7,6 @@ cd $SOURCE_DIR
 mkdir build 2>/dev/null || true
 cd build
 
-# Note: vecgeom doesn't correctly export RPATHs
-# module load vecgeom veccore 
 module load openmpi
 
 cmake -C ${BUILDSCRIPT_DIR}/vostok.cmake -G Ninja \

@@ -3,10 +3,10 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 //---------------------------------------------------------------------------//
-//! \file G4Importer.hh
+//! \file GeantImporter.hh
 //---------------------------------------------------------------------------//
-#ifndef base_G4Importer_hh
-#define base_G4Importer_hh
+#ifndef base_GeantImporter_hh
+#define base_GeantImporter_hh
 
 // C++
 #include <iostream>
@@ -18,20 +18,20 @@
 #include "TFile.h"
 
 // Project
-#include "G4ParticleDef.hh"
-#include "G4PhysicsTable.hh"
+#include "GeantParticleDef.hh"
+#include "GeantPhysicsTable.hh"
 
 namespace celeritas
 {
 //---------------------------------------------------------------------------//
 /*!
- * G4Importer loads particle data and physics tables previously saved into
+ * GeantImporter loads particle data and physics tables previously saved into
  * root files. The particle data is produced by G4ParticleDefinitionExporter
  * and physics tables are exported by the Geant4-Sandbox.
  *
  * Usage:
  * \code
- *  G4Importer importer;
+ *  GeantImporter importer;
  *  importer.loadParticleDefRootFile("/path/to/particleDefFile.root");
  *  importer.loadPhysicsTableRootFile("/path/to/physicsTables.root");
  * \endcode
@@ -42,38 +42,38 @@ namespace celeritas
  *
  * \code
  *  bool copyParticleDef(int pdg, G4ParticleDef &g4Particle);
- *  bool copyPhysicsTable(std::string physTableName, G4PhysicsTable &physTable);
- * \endcode
+ *  bool copyPhysicsTable(std::string physTableName, G4PhysicsTable
+ * &physTable); \endcode
  */
 
-class G4Importer : G4ParticleDef, G4PhysicsTable
+class GeantImporter : G4ParticleDef, G4PhysicsTable
 {
   protected:
-    TFile * rootFile_particleDef;
-    TFile * rootFile_physicsTable;
-    
+    TFile* rootFile_particleDef;
+    TFile* rootFile_physicsTable;
+
   public:
-    std::vector<std::string> objectsList;
-    std::vector<G4ParticleDef> particleVector;
+    std::vector<std::string>              objectsList;
+    std::vector<G4ParticleDef>            particleVector;
     std::map<std::string, G4PhysicsTable> physTableMap;
-    
+
   public:
-    G4Importer();
-    ~G4Importer();
-    
+    GeantImporter();
+    ~GeantImporter();
+
     void loadParticleDefRootFile(std::string const filename);
     void loadPhysicsTableRootFile(std::string const filename);
-    
-    bool copyParticleDef(int pdg, G4ParticleDef &g4Particle);
-    bool copyPhysicsTable(std::string physTableName, G4PhysicsTable &physTable);
-    
+
+    bool copyParticleDef(int pdg, G4ParticleDef& g4Particle);
+    bool copyPhysicsTable(std::string physTableName, G4PhysicsTable& physTable);
+
     void printObjectsList();
     void printParticleInfo(int pdg);
     void printPhysicsTable(std::string physTableName);
     void printPhysTableNames();
 
   private:
-    void buildObjectsList(TFile * rootFile);
+    void buildObjectsList(TFile* rootFile);
     void loadPhysicsTablesIntoMemory();
     void loadParticleDefsIntoMemory();
 };
@@ -81,4 +81,4 @@ class G4Importer : G4ParticleDef, G4PhysicsTable
 //---------------------------------------------------------------------------//
 } // namespace celeritas
 
-#endif // base_G4Importer_hh
+#endif // base_GeantImporter_hh
