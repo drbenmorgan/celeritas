@@ -3,12 +3,26 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 //---------------------------------------------------------------------------//
-//! \file GeantExporter.cc
+//! \file EventAction.hh
 //---------------------------------------------------------------------------//
 
-#include "G4ParticleDefinition.hh"
+#pragma once
 
-int main()
+// Geant4
+#include "G4Event.hh"
+#include "G4UserEventAction.hh"
+
+
+class EventAction : public G4UserEventAction
 {
-    return 0;
-}
+public:
+ 
+    EventAction();
+    virtual ~EventAction();
+    
+    virtual void  BeginOfEventAction(const G4Event* /*event*/);
+    virtual void  EndOfEventAction(const G4Event* /*event*/);
+    
+    G4ThreeVector RandomUnitaryThreeVector();
+};
+

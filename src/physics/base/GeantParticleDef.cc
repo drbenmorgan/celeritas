@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------//
 //! \file G4ParticleDef.cc
 //---------------------------------------------------------------------------//
-#include "G4ParticleDef.hh"
+#include "GeantParticleDef.hh"
 
 namespace celeritas
 {
