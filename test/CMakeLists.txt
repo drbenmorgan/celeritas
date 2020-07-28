@@ -99,6 +99,8 @@ celeritas_add_test(physics/em/KNInteractor.test.cc)
 # END PHYSICS TESTS
 set(CELERITASTEST_LINK_LIBRARIES)
 
+celeritas_add_test(physics/base/GeantImporter.test.cc)
+
 #-----------------------------------------------------------------------------#
 # Random
 

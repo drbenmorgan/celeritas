@@ -3,10 +3,9 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 //---------------------------------------------------------------------------//
-//! \file G4PhysicsTable.hh
+//! \file GeantPhysicsTable.hh
 //---------------------------------------------------------------------------//
-#ifndef base_G4PhysicsTable_hh
-#define base_G4PhysicsTable_hh
+#pragma once
 
 #include <vector>
 
@@ -16,8 +15,7 @@ namespace celeritas
 /*!
  * Struct to store Geant4 asc physics tables.
  */
-
-struct G4PhysicsTable
+struct GeantPhysicsTable
 {
     int                              tableSize_;
     std::vector<double>              edgeMin_;
@@ -30,5 +28,3 @@ struct G4PhysicsTable
 
 //---------------------------------------------------------------------------//
 } // namespace celeritas
-
-#endif // base_G4PhysicsTable_hh

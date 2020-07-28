@@ -63,7 +63,7 @@ if(CELERITAS_USE_ROOT)
     physics/base/GeantParticleDef.cc
     physics/base/GeantImporter.cc
   )
-list(APPEND PRIVATE_DEPS ROOT::Core ROOT::Tree)
+  list(APPEND PRIVATE_DEPS ROOT::Core ROOT::Tree)
 endif()
 
 add_library(celeritas ${SOURCES})

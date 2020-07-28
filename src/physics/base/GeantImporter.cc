@@ -20,8 +20,10 @@ namespace celeritas
 {
 //---------------------------------------------------------------------------//
 /*!
- * Default destructor
+ * Default constructor and destructor
  */
+GeantImporter::GeantImporter() = default;
+
 GeantImporter::~GeantImporter() = default;
 
 //---------------------------------------------------------------------------//
@@ -60,9 +62,9 @@ void GeantImporter::loadPhysicsTableRootFile(const std::string filename)
 
 //---------------------------------------------------------------------------//
 /*!
- * Copies a particle from the vector into a G4ParticleDef
+ * Copies a particle from the vector into a GeantParticleDef
  */
-bool GeantImporter::copyParticleDef(int pdg, G4ParticleDef& g4Particle)
+bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
 {
     for (auto aParticle : this->particleVector)
     {
@@ -78,10 +80,10 @@ bool GeantImporter::copyParticleDef(int pdg, G4ParticleDef& g4Particle)
 
 //---------------------------------------------------------------------------//
 /*!
- * Copies a physics table from the map into a G4PhysicsTable
+ * Copies a physics table from the map into a GeantPhysicsTable
  */
-bool GeantImporter::copyPhysicsTable(std::string     physTableName,
-                                     G4PhysicsTable& physTable)
+bool GeantImporter::copyPhysicsTable(std::string        physTableName,
+                                     GeantPhysicsTable& physTable)
 {
     for (auto thisPair : physTableMap)
     {
@@ -109,11 +111,11 @@ void GeantImporter::printObjectsList()
 
 //---------------------------------------------------------------------------//
 /*!
- * Finds the particle using its PDG and prints all its G4ParticleDef data
+ * Finds the particle using its PDG and prints all its GeantParticleDef data
  */
 void GeantImporter::printParticleInfo(int pdg)
 {
-    G4ParticleDef particle;
+    GeantParticleDef particle;
 
     if (!copyParticleDef(pdg, particle))
     {
@@ -135,7 +137,7 @@ void GeantImporter::printParticleInfo(int pdg)
 
 //---------------------------------------------------------------------------//
 /*!
- * Prints all the data from a given G4PhysicsTable by providing its name
+ * Prints all the data from a given GeantPhysicsTable by providing its name
  */
 void GeantImporter::printPhysicsTable(std::string physTableName)
 {
@@ -143,7 +145,7 @@ void GeantImporter::printPhysicsTable(std::string physTableName)
     std::cout << std::fixed;
     std::cout << std::scientific;
 
-    G4PhysicsTable aTable;
+    GeantPhysicsTable aTable;
 
     if (!copyPhysicsTable(physTableName, aTable))
     {
@@ -234,14 +236,14 @@ void GeantImporter::buildObjectsList(TFile* rootFile)
 //---------------------------------------------------------------------------//
 /*!
  * Loops over the objects list created by buildObjectsList() to create a
- * vector<G4ParticleDef>.
+ * vector<GeantParticleDef>.
  */
 void GeantImporter::loadParticleDefsIntoMemory()
 {
     this->physTableMap.clear();
     this->particleVector.clear();
 
-    G4ParticleDef thisParticle;
+    GeantParticleDef thisParticle;
     std::string*  branchName = new std::string;
 
     for (auto particleName : objectsList)
@@ -275,11 +277,11 @@ void GeantImporter::loadParticleDefsIntoMemory()
 //---------------------------------------------------------------------------//
 /*!
  * Loops over the objects list created by buildObjectsList() to create a
- * vector<G4ParticleDef>.
+ * vector<GeantParticleDef>.
  */
 void GeantImporter::loadPhysicsTablesIntoMemory()
 {
-    G4PhysicsTable pTable;
+    GeantPhysicsTable pTable;
 
     for (auto tableName : objectsList)
     {
@@ -294,7 +296,7 @@ void GeantImporter::loadPhysicsTablesIntoMemory()
         tree->SetBranchAddress("binVector", &readBinVector);
         tree->SetBranchAddress("dataVector", &readDataVector);
 
-        // For writing to g4PhysTable
+        // For writing to GeantPhysTable
         std::vector<double> writeBinVector;
         std::vector<double> writeDataVector;
 

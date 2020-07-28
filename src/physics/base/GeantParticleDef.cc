@@ -3,7 +3,7 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 //---------------------------------------------------------------------------//
-//! \file G4ParticleDef.cc
+//! \file GeantParticleDef.cc
 //---------------------------------------------------------------------------//
 #include "GeantParticleDef.hh"
 
@@ -13,7 +13,7 @@ namespace celeritas
 /*!
  * Construct with defaults
  */
-G4ParticleDef::G4ParticleDef()
+GeantParticleDef::GeantParticleDef()
     : name_("empty")
     , pdg_(0)
     , mass_(0)
@@ -28,13 +28,13 @@ G4ParticleDef::G4ParticleDef()
 /*!
  * Construct with user-defined values
  */
-G4ParticleDef::G4ParticleDef(std::string name,
-                             int         pdg,
-                             double      mass,
-                             double      charge,
-                             double      spin,
-                             double      lifetime,
-                             bool        isStable)
+GeantParticleDef::GeantParticleDef(std::string name,
+                                   int         pdg,
+                                   double      mass,
+                                   double      charge,
+                                   double      spin,
+                                   double      lifetime,
+                                   bool        isStable)
     : name_(name)
     , pdg_(pdg)
     , mass_(mass)
@@ -49,19 +49,19 @@ G4ParticleDef::G4ParticleDef(std::string name,
 /*!
  * Destructor
  */
-G4ParticleDef::~G4ParticleDef() {}
+GeantParticleDef::~GeantParticleDef() {}
 
 //---------------------------------------------------------------------------//
 /*!
  * Operator()
  */
-G4ParticleDef G4ParticleDef::operator()(std::string name,
-                                        int         pdg,
-                                        double      mass,
-                                        double      charge,
-                                        double      spin,
-                                        double      lifetime,
-                                        bool        isStable)
+GeantParticleDef GeantParticleDef::operator()(std::string name,
+                                              int         pdg,
+                                              double      mass,
+                                              double      charge,
+                                              double      spin,
+                                              double      lifetime,
+                                              bool        isStable)
 {
     this->name_     = name;
     this->pdg_      = pdg;
@@ -76,39 +76,39 @@ G4ParticleDef G4ParticleDef::operator()(std::string name,
 
 //---------------------------------------------------------------------------//
 /*!
- * Getters for all G4ParticleDef class variables
+ * Getters for all GeantParticleDef class variables
  */
-std::string G4ParticleDef::name()
+std::string GeantParticleDef::name()
 {
     return this->name_;
 }
 
-int G4ParticleDef::pdg()
+int GeantParticleDef::pdg()
 {
     return this->pdg_;
 }
 
-double G4ParticleDef::mass()
+double GeantParticleDef::mass()
 {
     return this->mass_;
 }
 
-double G4ParticleDef::charge()
+double GeantParticleDef::charge()
 {
     return this->charge_;
 }
 
-double G4ParticleDef::spin()
+double GeantParticleDef::spin()
 {
     return this->spin_;
 }
 
-double G4ParticleDef::lifetime()
+double GeantParticleDef::lifetime()
 {
     return this->lifetime_;
 }
 
-bool G4ParticleDef::isStable()
+bool GeantParticleDef::isStable()
 {
     return this->isStable_;
 }
