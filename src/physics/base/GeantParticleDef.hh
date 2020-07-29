@@ -9,51 +9,59 @@
 
 #include <string>
 
+#include "base/Types.hh"
+
 namespace celeritas
 {
 //---------------------------------------------------------------------------//
 /*!
- * Used by GeantImporter to store data from Geant4's G4ParticleDefinition class
+ * /brief Stores particle information for the GeantImporter class
+ *
+ * This class provides the same structure seen in the particleDef.root file
+ * created by the app/geant-exporter external code and it is used to load
+ * said ROOT data into memory by the GeantImporter class.
  */
 
 class GeantParticleDef
 {
   protected:
     std::string name_;
-    int         pdg_;
-    double      mass_;
-    double      charge_;
-    double      spin_;
-    double      lifetime_;
+    ssize_type  pdg_;
+    real_type   mass_;
+    real_type   charge_;
+    real_type   spin_;
+    real_type   lifetime_;
     bool        isStable_;
 
   public:
     GeantParticleDef();
     GeantParticleDef(std::string name,
-                     int         pdg,
-                     double      mass,
-                     double      charge,
-                     double      spin,
-                     double      lifetime,
+                     ssize_type  pdg,
+                     real_type   mass,
+                     real_type   charge,
+                     real_type   spin,
+                     real_type   lifetime,
                      bool        isStable);
     
     ~GeantParticleDef();
     
     GeantParticleDef operator()(std::string name,
-                                int         pdg,
-                                double      mass,
-                                double      charge,
-                                double      spin,
-                                double      lifetime,
+                                ssize_type  pdg,
+                                real_type   mass,
+                                real_type   charge,
+                                real_type   spin,
+                                real_type   lifetime,
                                 bool        isStable);
 
     std::string name();
-    int         pdg();
-    double      mass();
-    double      charge();
-    double      spin();
-    double      lifetime();
+    ssize_type  pdg();
+    real_type   mass();
+    real_type   charge();
+    real_type   spin();
+    real_type   lifetime();
     bool        isStable();
+    
+    void print();
 };
 
 //---------------------------------------------------------------------------//

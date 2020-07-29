@@ -40,11 +40,11 @@ class GeantImporterTest : public celeritas::Test
 // TESTS
 //---------------------------------------------------------------------------//
 
-TEST_F(GeantImporterTest, particle)
+TEST_F(GeantImporterTest, particle_electron)
 {
     importer_.loadParticleDefRootFile(particleDefFile_);
     GeantParticleDef particle;
-       
+
     EXPECT_TRUE(importer_.copyParticleDef(11, particle));
     EXPECT_SOFT_EQ(0.510998910, particle.mass());
     EXPECT_EQ(-1 , particle.charge());

@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 #include "GeantParticleDef.hh"
 
+#include <iostream>
+
 namespace celeritas
 {
 //---------------------------------------------------------------------------//
-/*!
- * Construct with defaults
- */
+//! Construct with defaults
 GeantParticleDef::GeantParticleDef()
     : name_("empty")
     , pdg_(0)
@@ -25,15 +25,13 @@ GeantParticleDef::GeantParticleDef()
 }
 
 //---------------------------------------------------------------------------//
-/*!
- * Construct with user-defined values
- */
+//! Construct with user-defined values
 GeantParticleDef::GeantParticleDef(std::string name,
-                                   int         pdg,
-                                   double      mass,
-                                   double      charge,
-                                   double      spin,
-                                   double      lifetime,
+                                   ssize_type  pdg,
+                                   real_type   mass,
+                                   real_type   charge,
+                                   real_type   spin,
+                                   real_type   lifetime,
                                    bool        isStable)
     : name_(name)
     , pdg_(pdg)
@@ -46,21 +44,17 @@ GeantParticleDef::GeantParticleDef(std::string name,
 }
 
 //---------------------------------------------------------------------------//
-/*!
- * Destructor
- */
+//! Destructor
 GeantParticleDef::~GeantParticleDef() {}
 
 //---------------------------------------------------------------------------//
-/*!
- * Operator()
- */
+//! Operator()
 GeantParticleDef GeantParticleDef::operator()(std::string name,
-                                              int         pdg,
-                                              double      mass,
-                                              double      charge,
-                                              double      spin,
-                                              double      lifetime,
+                                              ssize_type  pdg,
+                                              real_type   mass,
+                                              real_type   charge,
+                                              real_type   spin,
+                                              real_type   lifetime,
                                               bool        isStable)
 {
     this->name_     = name;
@@ -75,9 +69,7 @@ GeantParticleDef GeantParticleDef::operator()(std::string name,
 }
 
 //---------------------------------------------------------------------------//
-/*!
- * Getters for all GeantParticleDef class variables
- */
+//! Getters for all GeantParticleDef class variables
 std::string GeantParticleDef::name()
 {
     return this->name_;
@@ -111,6 +103,22 @@ double GeantParticleDef::lifetime()
 bool GeantParticleDef::isStable()
 {
     return this->isStable_;
+}
+
+//---------------------------------------------------------------------------//
+//! Prints the data of a GeantParticleDef particle
+void GeantParticleDef::print()
+{
+    std::cout << "-----------------------" << std::endl;
+    std::cout << this->name() << std::endl;
+    std::cout << "-----------------------" << std::endl;
+    std::cout << "pdg      : " << this->pdg() << std::endl;
+    std::cout << "mass     : " << this->mass() << std::endl;
+    std::cout << "charge   : " << this->charge() << std::endl;
+    std::cout << "spin     : " << this->spin() << std::endl;
+    std::cout << "lifetime : " << this->lifetime() << std::endl;
+    std::cout << "isStable : " << this->isStable() << std::endl;
+    std::cout << "-----------------------" << std::endl;
 }
 
 //---------------------------------------------------------------------------//

@@ -23,23 +23,22 @@ namespace celeritas
  * Default constructor and destructor
  */
 GeantImporter::GeantImporter() = default;
-
-GeantImporter::~GeantImporter() = default;
+ GeantImporter::~GeantImporter() = default;
 
 //---------------------------------------------------------------------------//
 /*!
  * Loads the data from the particleData.root file into memory as a vector
  */
-void GeantImporter::loadParticleDefRootFile(const std::string filename)
+void GeantImporter::loadParticleDefRootFile(std::string const filename)
 {
-    this->rootFile_particleDef
+    this->rootFile_particleDef_
         = std::make_unique<TFile>(filename.c_str(), "open");
 
-    // Silly safeguard
-    if (!rootFile_particleDef)
+    // Silly safeguardfilename
+    if (!rootFile_particleDef_)
         return;
 
-    buildObjectsList(this->rootFile_particleDef.get());
+    buildObjectsList(this->rootFile_particleDef_.get());
     loadParticleDefsIntoMemory();
 }
 
@@ -47,16 +46,16 @@ void GeantImporter::loadParticleDefRootFile(const std::string filename)
 /*!
  * Loads the data from the physicsTables.root file into memory as a map
  */
-void GeantImporter::loadPhysicsTableRootFile(const std::string filename)
+void GeantImporter::loadPhysicsTableRootFile(std::string const filename)
 {
-    this->rootFile_physicsTable
+    this->rootFile_physicsTable_
         = std::make_unique<TFile>(filename.c_str(), "open");
 
     // Silly safeguard
-    if (!rootFile_physicsTable)
+    if (!rootFile_physicsTable_)
         return;
 
-    buildObjectsList(this->rootFile_physicsTable.get());
+    buildObjectsList(this->rootFile_physicsTable_.get());
     loadPhysicsTablesIntoMemory();
 }
 
@@ -64,9 +63,10 @@ void GeantImporter::loadPhysicsTableRootFile(const std::string filename)
 /*!
  * Copies a particle from the vector into a GeantParticleDef
  */
+
 bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
 {
-    for (auto aParticle : this->particleVector)
+    for (auto aParticle : this->particleVector_)
     {
         if (aParticle.pdg() == pdg)
         {
@@ -74,7 +74,6 @@ bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
             return true;
         }
     }
-
     return false;
 }
 
@@ -82,10 +81,11 @@ bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
 /*!
  * Copies a physics table from the map into a GeantPhysicsTable
  */
+
 bool GeantImporter::copyPhysicsTable(std::string        physTableName,
                                      GeantPhysicsTable& physTable)
 {
-    for (auto thisPair : physTableMap)
+    for (auto thisPair : this->physTableMap_)
     {
         if (thisPair.first == physTableName)
         {
@@ -93,7 +93,6 @@ bool GeantImporter::copyPhysicsTable(std::string        physTableName,
             return true;
         }
     }
-
     return false;
 }
 
@@ -103,7 +102,7 @@ bool GeantImporter::copyPhysicsTable(std::string        physTableName,
  */
 void GeantImporter::printObjectsList()
 {
-    for (auto name : this->objectsList)
+    for (auto name : this->objectsList_)
     {
         std::cout << name << std::endl;
     }
@@ -113,6 +112,7 @@ void GeantImporter::printObjectsList()
 /*!
  * Finds the particle using its PDG and prints all its GeantParticleDef data
  */
+
 void GeantImporter::printParticleInfo(int pdg)
 {
     GeantParticleDef particle;
@@ -189,9 +189,9 @@ void GeantImporter::printPhysicsTable(std::string physTableName)
 /*!
  * Prints all the physics table names found in the ROOT file
  */
-void GeantImporter::printPhysTableNames()
+void GeantImporter::printPhysicsTableNames()
 {
-    for (auto aTable : this->physTableMap)
+    for (auto aTable : this->physTableMap_)
     {
         std::cout << aTable.first << std::endl;
     }
@@ -214,7 +214,7 @@ void GeantImporter::buildObjectsList(TFile* rootFile)
     TIter iter(list->MakeIterator());
 
     // Cleaning vector
-    this->objectsList.clear();
+    this->objectsList_.clear();
 
     // Looping over the objects found in rootInput
     while (TObject* object = iter())
@@ -229,7 +229,7 @@ void GeantImporter::buildObjectsList(TFile* rootFile)
         if (keyType != "TTree")
             continue;
 
-        this->objectsList.push_back(keyName);
+        this->objectsList_.push_back(keyName);
     }
 }
 
@@ -240,27 +240,27 @@ void GeantImporter::buildObjectsList(TFile* rootFile)
  */
 void GeantImporter::loadParticleDefsIntoMemory()
 {
-    this->physTableMap.clear();
-    this->particleVector.clear();
+    this->physTableMap_.clear();
+    this->particleVector_.clear();
 
     GeantParticleDef thisParticle;
     std::string*  branchName = new std::string;
 
-    for (auto particleName : objectsList)
+    for (auto particleName : this->objectsList_)
     {
         TTree* treeParticle
-            = (TTree*)this->rootFile_particleDef->Get(particleName.c_str());
+            = (TTree*)this->rootFile_particleDef_->Get(particleName.c_str());
         treeParticle->SetBranchAddress("name", &branchName);
 
         treeParticle->GetEntry(0);
 
         std::string thisName   = *branchName;
-        int         thisPdg    = treeParticle->GetLeaf("pdg")->GetValue();
-        double      thisMass   = treeParticle->GetLeaf("mass")->GetValue();
-        double      thisCharge = treeParticle->GetLeaf("charge")->GetValue();
-        double      thisSpin   = treeParticle->GetLeaf("spin")->GetValue();
-        double thisLifetime    = treeParticle->GetLeaf("lifetime")->GetValue();
-        bool   thisIsStable    = treeParticle->GetLeaf("isStable")->GetValue();
+        ssize_type  thisPdg    = treeParticle->GetLeaf("pdg")->GetValue();
+        real_type   thisMass   = treeParticle->GetLeaf("mass")->GetValue();
+        real_type   thisCharge = treeParticle->GetLeaf("charge")->GetValue();
+        real_type   thisSpin   = treeParticle->GetLeaf("spin")->GetValue();
+        real_type thisLifetime = treeParticle->GetLeaf("lifetime")->GetValue();
+        bool      thisIsStable = treeParticle->GetLeaf("isStable")->GetValue();
 
         thisParticle(thisName,
                      thisPdg,
@@ -270,7 +270,7 @@ void GeantImporter::loadParticleDefsIntoMemory()
                      thisLifetime,
                      thisIsStable);
 
-        this->particleVector.push_back(thisParticle);
+        this->particleVector_.push_back(thisParticle);
     }
 }
 
@@ -279,26 +279,27 @@ void GeantImporter::loadParticleDefsIntoMemory()
  * Loops over the objects list created by buildObjectsList() to create a
  * vector<GeantParticleDef>.
  */
+
 void GeantImporter::loadPhysicsTablesIntoMemory()
 {
     GeantPhysicsTable pTable;
 
-    for (auto tableName : objectsList)
+    for (auto tableName : objectsList_)
     {
         // Creating a tree pointer and getting the tree
         TTree* tree
-            = (TTree*)this->rootFile_physicsTable->Get(tableName.c_str());
+            = (TTree*)this->rootFile_physicsTable_->Get(tableName.c_str());
 
         // For accessing the tree members
-        std::vector<double>* readBinVector  = new std::vector<double>;
-        std::vector<double>* readDataVector = new std::vector<double>;
+        std::vector<real_type>* readBinVector  = new std::vector<real_type>;
+        std::vector<real_type>* readDataVector = new std::vector<real_type>;
 
         tree->SetBranchAddress("binVector", &readBinVector);
         tree->SetBranchAddress("dataVector", &readDataVector);
 
         // For writing to GeantPhysTable
-        std::vector<double> writeBinVector;
-        std::vector<double> writeDataVector;
+        std::vector<real_type> writeBinVector;
+        std::vector<real_type> writeDataVector;
 
         // Looping over the tree entries
         pTable.tableSize_ = tree->GetEntries();
@@ -330,8 +331,7 @@ void GeantImporter::loadPhysicsTablesIntoMemory()
             pTable.binVector_.push_back(writeBinVector);
             pTable.dataVector_.push_back(writeDataVector);
         }
-
-        this->physTableMap.emplace(std::make_pair(tableName, pTable));
+        this->physTableMap_.emplace(std::make_pair(tableName, pTable));
     }
 }
 

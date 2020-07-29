@@ -6,26 +6,29 @@
 //! \file GeantImporter.hh
 //---------------------------------------------------------------------------//
 /*!
-* GeantImporter loads particle data and physics tables previously saved into
-* root files. The particle data is produced by GeantParticleDefinitionExporter
-* and physics tables are exported by the Geant4-Sandbox.
-*
-* Usage:
-* \code
-*  GeantImporter importer;
-*  importer.loadParticleDefRootFile("/path/to/particleDefFile.root");
-*  importer.loadPhysicsTableRootFile("/path/to/physicsTables.root");
-* \endcode
-*
-* These methods will load into memory both particles and physics tables as
-* vector<GeantParticleDef> and map<tableName, G4Physics>. All the data can be
-* accessed by either accessing the vector and map or via copy functions:
-*
-* \code
-*  bool copyParticleDef(int pdg, GeantParticleDef &g4Particle);
-*  bool copyPhysicsTable(std::string physTableName, GeantPhysicsTable
-* &physTable); \endcode
-*/
+ * \brief Loads particleDef and physics table data from ROOT files
+ *
+ * GeantImporter loads particle data and physics tables previously saved into
+ * root files by the external code app/geant-exporter.
+ *
+ * Usage:
+ * \code
+ *  GeantImporter importer;
+ *  importer.loadParticleDefRootFile("/path/to/particleDefFile.root");
+ *  importer.loadPhysicsTableRootFile("/path/to/physicsTables.root");
+ * \endcode
+ *
+ * These methods will load into memory both particles and physics tables as
+ * vector<GeantParticleDef> and map<tableName, GeantPhysicsTable>. The data
+ * can be retrieved via copy functions:
+ * \code
+ *  bool copyParticleDef(int pdg, GeantParticleDef &g4Particle);
+ *  bool copyPhysicsTable(std::string physTableName,
+ *                        GeantPhysicsTable &physTable);
+ * \endcode
+ *
+ * Use printPhysicsTableNames() to view the list of available physics tables.
+ */
 //-------------------------------------------------------------------------//
 
 #pragma once
@@ -39,8 +42,11 @@
 // Project
 #include "GeantParticleDef.hh"
 #include "GeantPhysicsTable.hh"
+#include "base/Types.hh"
+#include "base/Macros.hh"
 
-// Root forward declaration
+
+// ROOT forward declaration
 class TFile;
 
 namespace celeritas
@@ -56,14 +62,14 @@ class GeantImporter
     void loadParticleDefRootFile(std::string const filename);
     void loadPhysicsTableRootFile(std::string const filename);
 
-    bool copyParticleDef(int pdg, GeantParticleDef& g4Particle);
+    bool copyParticleDef(ssize_type pdg, GeantParticleDef& g4Particle);
     bool copyPhysicsTable(std::string        physTableName,
                           GeantPhysicsTable& physTable);
 
     void printObjectsList();
-    void printParticleInfo(int pdg);
+    void printParticleInfo(ssize_type pdg);
     void printPhysicsTable(std::string physTableName);
-    void printPhysTableNames();
+    void printPhysicsTableNames();
 
   private:
     void buildObjectsList(TFile* rootFile);
@@ -71,12 +77,12 @@ class GeantImporter
     void loadParticleDefsIntoMemory();
 
   private:
-    std::vector<std::string>                 objectsList;
-    std::vector<GeantParticleDef>            particleVector;
-    std::map<std::string, GeantPhysicsTable> physTableMap;
+    std::vector<std::string>                 objectsList_;
+    std::vector<GeantParticleDef>            particleVector_;
+    std::map<std::string, GeantPhysicsTable> physTableMap_;
 
-    std::unique_ptr<TFile> rootFile_particleDef;
-    std::unique_ptr<TFile> rootFile_physicsTable;
+    std::unique_ptr<TFile> rootFile_particleDef_;
+    std::unique_ptr<TFile> rootFile_physicsTable_;
 };
 
 //---------------------------------------------------------------------------//

@@ -9,6 +9,8 @@
 
 #include <vector>
 
+#include "base/Types.hh"
+
 namespace celeritas
 {
 //---------------------------------------------------------------------------//
@@ -17,13 +19,13 @@ namespace celeritas
  */
 struct GeantPhysicsTable
 {
-    int                              tableSize_;
-    std::vector<double>              edgeMin_;
-    std::vector<double>              edgeMax_;
-    std::vector<int>                 numberOfNodes_;
-    std::vector<int>                 vectorType_;
-    std::vector<std::vector<double>> binVector_;
-    std::vector<std::vector<double>> dataVector_;
+    ssize_type                          tableSize_;
+    std::vector<real_type>              edgeMin_;
+    std::vector<real_type>              edgeMax_;
+    std::vector<ssize_type>             numberOfNodes_;
+    std::vector<ssize_type>             vectorType_;
+    std::vector<std::vector<real_type>> binVector_;
+    std::vector<std::vector<real_type>> dataVector_;
 };
 
 //---------------------------------------------------------------------------//
