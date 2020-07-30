@@ -22,8 +22,8 @@ namespace celeritas
 /*!
  * Default constructor and destructor
  */
-GeantImporter::GeantImporter() = default;
- GeantImporter::~GeantImporter() = default;
+GeantImporter::GeantImporter()  = default;
+GeantImporter::~GeantImporter() = default;
 
 //---------------------------------------------------------------------------//
 /*!
@@ -34,7 +34,7 @@ void GeantImporter::loadParticleDefRootFile(std::string const filename)
     this->rootFile_particleDef_
         = std::make_unique<TFile>(filename.c_str(), "open");
 
-    // Silly safeguardfilename
+    // Silly safeguard
     if (!rootFile_particleDef_)
         return;
 
@@ -63,7 +63,6 @@ void GeantImporter::loadPhysicsTableRootFile(std::string const filename)
 /*!
  * Copies a particle from the vector into a GeantParticleDef
  */
-
 bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
 {
     for (auto aParticle : this->particleVector_)
@@ -81,7 +80,6 @@ bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
 /*!
  * Copies a physics table from the map into a GeantPhysicsTable
  */
-
 bool GeantImporter::copyPhysicsTable(std::string        physTableName,
                                      GeantPhysicsTable& physTable)
 {
@@ -112,7 +110,6 @@ void GeantImporter::printObjectsList()
 /*!
  * Finds the particle using its PDG and prints all its GeantParticleDef data
  */
-
 void GeantImporter::printParticleInfo(int pdg)
 {
     GeantParticleDef particle;
@@ -198,6 +195,58 @@ void GeantImporter::printPhysicsTableNames()
 }
 
 //---------------------------------------------------------------------------//
+/*!
+ * Returns a ParticleDef type by providing a PDG number
+ */
+ParticleDef GeantImporter::particleDef(ssize_type pdg)
+{
+    ParticleDef      particle;
+    GeantParticleDef g4particle;
+
+    if (copyParticleDef(pdg, g4particle))
+    {
+        particle.mass           = g4particle.mass();
+        particle.charge         = g4particle.charge();
+        particle.decay_constant = 1. / g4particle.lifetime();
+    }
+
+    // TODO: Safeguard if no particle is found
+
+    return particle;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * Returns a ParticleDef type by providing a GeantParticleDef type
+ */
+ParticleDef GeantImporter::particleDef(GeantParticleDef& g4particle)
+{
+    ParticleDef particle;
+
+    particle.mass           = g4particle.mass();
+    particle.charge         = g4particle.charge();
+    particle.decay_constant = 1. / g4particle.lifetime();
+
+    return particle;
+}
+
+//---------------------------------------------------------------------------//
+std::vector<ParticleDef> GeantImporter::particleDefVector()
+{
+    std::vector<ParticleDef> particleVec;
+    ParticleDef particle;
+
+    for (auto gParticleDef : this->particleVector_)
+    {
+        particle = this->particleDef(gParticleDef);
+        particleVec.push_back(particle);
+    }
+
+    return particleVec;
+}
+
+
+//---------------------------------------------------------------------------//
 // PRIVATE
 //---------------------------------------------------------------------------//
 
@@ -244,7 +293,7 @@ void GeantImporter::loadParticleDefsIntoMemory()
     this->particleVector_.clear();
 
     GeantParticleDef thisParticle;
-    std::string*  branchName = new std::string;
+    std::string*     branchName = new std::string;
 
     for (auto particleName : this->objectsList_)
     {
@@ -279,7 +328,6 @@ void GeantImporter::loadParticleDefsIntoMemory()
  * Loops over the objects list created by buildObjectsList() to create a
  * vector<GeantParticleDef>.
  */
-
 void GeantImporter::loadPhysicsTablesIntoMemory()
 {
     GeantPhysicsTable pTable;

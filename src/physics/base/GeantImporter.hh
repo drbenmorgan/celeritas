@@ -27,7 +27,7 @@
  *                        GeantPhysicsTable &physTable);
  * \endcode
  *
- * Use printPhysicsTableNames() to view the list of available physics tables.
+ * Use \c printPhysicsTableNames() to view the list of physics tables.
  */
 //-------------------------------------------------------------------------//
 
@@ -42,6 +42,9 @@
 // Project
 #include "GeantParticleDef.hh"
 #include "GeantPhysicsTable.hh"
+#include "ParticleDef.hh"
+#include "ParticleMd.hh"
+
 #include "base/Types.hh"
 #include "base/Macros.hh"
 
@@ -59,17 +62,33 @@ class GeantImporter
     GeantImporter();
     ~GeantImporter();
 
+    // Loads the ROOT data into memeory
     void loadParticleDefRootFile(std::string const filename);
     void loadPhysicsTableRootFile(std::string const filename);
 
+    // Copy the data from memory into an object
     bool copyParticleDef(ssize_type pdg, GeantParticleDef& g4Particle);
     bool copyPhysicsTable(std::string        physTableName,
                           GeantPhysicsTable& physTable);
 
+    // Print capabilities
     void printObjectsList();
     void printParticleInfo(ssize_type pdg);
     void printPhysicsTable(std::string physTableName);
     void printPhysicsTableNames();
+
+    // Construct a ParticleDef 
+    ParticleDef particleDef(ssize_type pdg);
+    ParticleDef particleDef(GeantParticleDef& g4particle);
+    std::vector<ParticleDef> particleDefVector();
+
+    // Construct a ParticleMd
+    ParticleMd particleMd(ssize_type pdg);
+    ParticleMd particleMd(GeantParticleDef& g4particle);
+
+    // Construct a ParticleParams
+
+    // Construct a Particle
 
   private:
     void buildObjectsList(TFile* rootFile);
