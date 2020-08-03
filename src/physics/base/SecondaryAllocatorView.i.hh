@@ -82,7 +82,7 @@ CELER_FUNCTION auto SecondaryAllocatorView::capacity() const -> size_type
  */
 CELER_FUNCTION auto SecondaryAllocatorView::secondaries() -> SpanSecondary
 {
-    // REQUIRE(*shared_.size <= this->capacity());
+    REQUIRE(*shared_.size <= this->capacity());
     return {shared_.storage.data(), *shared_.size};
 }
 
@@ -95,7 +95,7 @@ CELER_FUNCTION auto SecondaryAllocatorView::secondaries() -> SpanSecondary
 CELER_FUNCTION auto SecondaryAllocatorView::secondaries() const
     -> constSpanSecondary
 {
-    // REQUIRE(*shared_.size <= this->capacity());
+    REQUIRE(*shared_.size <= this->capacity());
     return {shared_.storage.data(), *shared_.size};
 }
 //---------------------------------------------------------------------------//
