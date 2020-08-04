@@ -31,11 +31,9 @@ class GeantImporterTest : public celeritas::Test
 
     GeantImporter importer_;
 
-    std::string testPath_ = "/Users/4s2/celeritas-project/celeritas/test";
-    std::string particleDefFile_
-        = testPath_ + "/physics/base/data/particleDefinitionTable.root";
-    std::string physicsTablesFile_ = testPath_
-                                     + "/physics/base/data/physicsTables.root";
+    std::string testPath_  = "/Users/4s2/celeritas-project/celeritas/test";
+    std::string root_file_ = testPath_
+                             + "/physics/base/data/geant-exporter-data.root";
 };
 
 //---------------------------------------------------------------------------//
@@ -44,27 +42,31 @@ class GeantImporterTest : public celeritas::Test
 
 TEST_F(GeantImporterTest, particle_electron)
 {
-    importer_.loadParticleDefRootFile(particleDefFile_);
+    importer_.load_root_file(root_file_);
+    importer_.load_particleDefs();
+
     GeantParticleDef particle;
 
-    EXPECT_TRUE(importer_.copyParticleDef(11, particle));
+    EXPECT_TRUE(importer_.copy_geantParticleDef(11, particle));
     EXPECT_SOFT_EQ(0.510998910, particle.mass());
     EXPECT_EQ(-1, particle.charge());
     EXPECT_EQ(0.5, particle.spin());
     EXPECT_EQ(-1, particle.lifetime());
-    EXPECT_TRUE(particle.isStable());
+    EXPECT_TRUE(particle.is_stable());
 }
 
 //---------------------------------------------------------------------------//
 
 TEST_F(GeantImporterTest, physicsTable)
 {
-    importer_.loadPhysicsTableRootFile(physicsTablesFile_);
+    importer_.load_root_file(root_file_);
+    importer_.load_physicsTables();
     GeantPhysicsTable physTable;
 
-    EXPECT_TRUE(importer_.copyPhysicsTable("DEDX_eIoni_eMinus", physTable));
+    EXPECT_TRUE(importer_.copy_geantPhysicsTable(
+        "Lambda_compt_Klein-Nishina_gamma", physTable));
 }
-
+/*
 //---------------------------------------------------------------------------//
 
 TEST_F(GeantImporterTest, particleDef_object)
@@ -86,14 +88,7 @@ TEST_F(GeantImporterTest, particleDefVector)
 
     std::vector<ParticleDef> particleDefVector = importer_.particleDefVector();
 
-    celeritas::span<ParticleDef> particleDefSpan;
-    /*
-    for (auto particle : particleDefVector)
-    {
-        std::cout << "mass    : " << particle.mass << std::endl;
-        std::cout << "charge  : " << particle.charge << std::endl;
-        std::cout << "decay ct: " << particle.decay_constant << std::endl;
-        std::cout << std::endl;
-    }
-    */
+    celeritas::span<ParticleDef> particleDefSpan(particleDefVector.data(),
+particleDefVector.size());
 }
+*/

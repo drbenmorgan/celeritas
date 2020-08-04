@@ -3,15 +3,27 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 //---------------------------------------------------------------------------//
-//! \file SteppingAction.cc
+//! \file GeantPhysicsVectorType.hh
 //---------------------------------------------------------------------------//
+#pragma once
 
-#include "SteppingAction.hh"
+namespace celeritas
+{
+//---------------------------------------------------------------------------//
+/*!
+ * Geant4 PhysicsVector type enums
+ */
+enum GeantPhysicsVectorType
+{
+    Geant4PhysicsVector = 0,
+    Geant4PhysicsLinearVector,
+    Geant4PhysicsLogVector,
+    Geant4PhysicsLnVector,
+    Geant4PhysicsFreeVector,
+    Geant4PhysicsOrderedFreeVector,
+    Geant4LPhysicsFreeVector
+};
 
 //---------------------------------------------------------------------------//
-//! Constructor and destructor
-SteppingAction::SteppingAction() : G4UserSteppingAction() {}
-SteppingAction::~SteppingAction() {}
+} // namespace celeritas
 
-//---------------------------------------------------------------------------//
-void SteppingAction::UserSteppingAction(const G4Step* /*step*/) {}

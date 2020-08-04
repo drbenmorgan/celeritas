@@ -20,32 +20,42 @@ class G4PhysicsTable;
 
 class GeantPhysicsTableParser
 {
-public:
-    GeantPhysicsTableParser() = default;
+  public:
+    GeantPhysicsTableParser()  = default;
     ~GeantPhysicsTableParser() = default;
-    
-    void createRootFile(std::string rootFilename);
-    void addPhysicsTableTree(std::string physTableAscFile);
-    void addPhysicsTableTree(G4VProcess           * process,
-                             G4ParticleDefinition * particle);
 
-private:
-    std::unique_ptr<TFile> rootOutput_;
-    std::string rootOutputFilename_;
-    
-    int tableSize_;
-    int vectorType_;
-    double edgeMin_;
-    double edgeMax_;
-    int numberOfNodes_;
-    int size_;
-    
-    std::vector<double> binVector_;  // Stores energy info
-    std::vector<double> dataVector_; // Stores XS/Eloss info
-    
-    void writeTree(std::string tree_name, G4PhysicsTable * table);
+    void create_root_file(std::string rootFilename);
+    void root_file_name(std::string rootFilename);
+    void add_physics_table(std::string physTableAscFile);
+    void add_physics_table(G4VProcess* process, G4ParticleDefinition* particle);
+
+  private:
+    std::unique_ptr<TFile> root_output_;
+    std::string            root_output_filename_;
+
+    int         process_type;
+    std::string process_type_name_;
+    std::string table_type_;
+    std::string process_;
+    std::string model_;
+    std::string particle_;
+    int         table_size_;
+    int         vector_type_;
+    double      edge_min_;
+    double      edge_max_;
+    int         number_of_nodes_;
+    int         size_;
+
+    std::vector<double> energy_;   // Geant4 binVector
+    std::vector<double> xs_eloss_; // Geant4 dataVector
+
+    void write_tree(std::string tree_name, G4PhysicsTable* table);
 };
 
-void replaceCharacters(std::string &aString,
-                       std::string const search,
-                       std::string const replace);
+void replace_characters(std::string&      aString,
+                        std::string const search,
+                        std::string const replace);
+
+void replace_last_character(std::string&      aString,
+                            std::string const search,
+                            std::string const replace);

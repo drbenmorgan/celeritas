@@ -6,21 +6,19 @@
 //! \file DetectorConstruction.cc
 //---------------------------------------------------------------------------//
 
-
 #include "DetectorConstruction.hh"
-
 
 //---------------------------------------------------------------------------//
 //! Constructs with a given gdml input file
 DetectorConstruction::DetectorConstruction(G4String gdmlInput)
-: physVolWorld_(0)
+    : phys_vol_world_(0)
 {
-    this->gdmlParser_.Read(gdmlInput);
-    this->physVolWorld_ = this->gdmlParser_.GetWorldVolume();
+    this->gdml_parser_.Read(gdmlInput);
+    this->phys_vol_world_ = this->gdml_parser_.GetWorldVolume();
 }
 
 //---------------------------------------------------------------------------//
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
-    return physVolWorld_;
+    return phys_vol_world_;
 }

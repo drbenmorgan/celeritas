@@ -31,7 +31,7 @@ class GeantParticleDef
     real_type   charge_;
     real_type   spin_;
     real_type   lifetime_;
-    bool        isStable_;
+    bool        is_stable_;
 
   public:
     GeantParticleDef();
@@ -41,7 +41,7 @@ class GeantParticleDef
                      real_type   charge,
                      real_type   spin,
                      real_type   lifetime,
-                     bool        isStable);
+                     bool        is_stable);
     
     ~GeantParticleDef();
     
@@ -51,7 +51,7 @@ class GeantParticleDef
                                 real_type   charge,
                                 real_type   spin,
                                 real_type   lifetime,
-                                bool        isStable);
+                                bool        is_stable);
 
     std::string name();
     ssize_type  pdg();
@@ -59,7 +59,7 @@ class GeantParticleDef
     real_type   charge();
     real_type   spin();
     real_type   lifetime();
-    bool        isStable();
+    bool        is_stable();
     
     void print();
 };

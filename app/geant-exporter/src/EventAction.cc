@@ -6,27 +6,16 @@
 //! \file EventAction.cc
 //---------------------------------------------------------------------------//
 
-
 #include "EventAction.hh"
-
 
 //---------------------------------------------------------------------------//
 //! Default constructor and destructor
-EventAction::EventAction()
-: G4UserEventAction()
-{
-}
+EventAction::EventAction() : G4UserEventAction() {}
 
-EventAction::~EventAction()
-{
-}
+EventAction::~EventAction() {}
 
 //---------------------------------------------------------------------------//
-void EventAction::BeginOfEventAction(const G4Event* /*event*/)
-{
-}
+void EventAction::BeginOfEventAction(const G4Event* /*event*/) {}
 
 //---------------------------------------------------------------------------//
-void EventAction::EndOfEventAction(const G4Event* /*event*/)
-{
-}
+void EventAction::EndOfEventAction(const G4Event* /*event*/) {}

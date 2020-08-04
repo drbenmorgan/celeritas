@@ -14,12 +14,11 @@
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
-public:
+  public:
     DetectorConstruction(G4String gdmlInput);
-    virtual G4VPhysicalVolume *Construct();
-    
-private:
-    G4GDMLParser gdmlParser_;
-    G4VPhysicalVolume *physVolWorld_;
-    
+    virtual G4VPhysicalVolume* Construct();
+
+  private:
+    G4GDMLParser       gdml_parser_;
+    G4VPhysicalVolume* phys_vol_world_;
 };

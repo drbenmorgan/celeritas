@@ -12,6 +12,7 @@
 
 // ROOT
 #include "TFile.h"
+#include "TDirectory.h"
 #include "TTree.h"
 #include "TBranch.h"
 #include "TLeaf.h"
@@ -29,41 +30,16 @@ GeantImporter::~GeantImporter() = default;
 /*!
  * Loads the data from the particleData.root file into memory as a vector
  */
-void GeantImporter::loadParticleDefRootFile(std::string const filename)
+void GeantImporter::load_root_file(std::string const filename)
 {
-    this->rootFile_particleDef_
-        = std::make_unique<TFile>(filename.c_str(), "open");
-
-    // Silly safeguard
-    if (!rootFile_particleDef_)
-        return;
-
-    buildObjectsList(this->rootFile_particleDef_.get());
-    loadParticleDefsIntoMemory();
-}
-
-//---------------------------------------------------------------------------//
-/*!
- * Loads the data from the physicsTables.root file into memory as a map
- */
-void GeantImporter::loadPhysicsTableRootFile(std::string const filename)
-{
-    this->rootFile_physicsTable_
-        = std::make_unique<TFile>(filename.c_str(), "open");
-
-    // Silly safeguard
-    if (!rootFile_physicsTable_)
-        return;
-
-    buildObjectsList(this->rootFile_physicsTable_.get());
-    loadPhysicsTablesIntoMemory();
+    this->root_input_ = std::make_unique<TFile>(filename.c_str(), "open");
 }
 
 //---------------------------------------------------------------------------//
 /*!
  * Copies a particle from the vector into a GeantParticleDef
  */
-bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
+bool GeantImporter::copy_geantParticleDef(int pdg, GeantParticleDef& g4Particle)
 {
     for (auto aParticle : this->particleVector_)
     {
@@ -80,8 +56,8 @@ bool GeantImporter::copyParticleDef(int pdg, GeantParticleDef& g4Particle)
 /*!
  * Copies a physics table from the map into a GeantPhysicsTable
  */
-bool GeantImporter::copyPhysicsTable(std::string        physTableName,
-                                     GeantPhysicsTable& physTable)
+bool GeantImporter::copy_geantPhysicsTable(std::string        physTableName,
+                                           GeantPhysicsTable& physTable)
 {
     for (auto thisPair : this->physTableMap_)
     {
@@ -114,7 +90,7 @@ void GeantImporter::printParticleInfo(int pdg)
 {
     GeantParticleDef particle;
 
-    if (!copyParticleDef(pdg, particle))
+    if (!copy_geantParticleDef(pdg, particle))
     {
         std::cout << "Particle not found" << std::endl;
         return;
@@ -123,12 +99,12 @@ void GeantImporter::printParticleInfo(int pdg)
     std::cout << "-----------------------" << std::endl;
     std::cout << particle.name() << std::endl;
     std::cout << "-----------------------" << std::endl;
-    std::cout << "pdg      : " << particle.pdg() << std::endl;
-    std::cout << "mass     : " << particle.mass() << std::endl;
-    std::cout << "charge   : " << particle.charge() << std::endl;
-    std::cout << "spin     : " << particle.spin() << std::endl;
-    std::cout << "lifetime : " << particle.lifetime() << std::endl;
-    std::cout << "isStable : " << particle.isStable() << std::endl;
+    std::cout << "pdg       : " << particle.pdg() << std::endl;
+    std::cout << "mass      : " << particle.mass() << std::endl;
+    std::cout << "charge    : " << particle.charge() << std::endl;
+    std::cout << "spin      : " << particle.spin() << std::endl;
+    std::cout << "lifetime  : " << particle.lifetime() << std::endl;
+    std::cout << "is_stable : " << particle.is_stable() << std::endl;
     std::cout << "-----------------------" << std::endl;
 }
 
@@ -136,6 +112,7 @@ void GeantImporter::printParticleInfo(int pdg)
 /*!
  * Prints all the data from a given GeantPhysicsTable by providing its name
  */
+/*
 void GeantImporter::printPhysicsTable(std::string physTableName)
 {
     std::cout << std::setprecision(3);
@@ -151,23 +128,22 @@ void GeantImporter::printPhysicsTable(std::string physTableName)
     }
 
     std::cout << physTableName << std::endl;
-    std::cout << " | tableSize: " << aTable.tableSize_ << std::endl;
+    std::cout << " | tableSize: " << aTable.size() << std::endl;
 
-    for (int i = 0; i < aTable.tableSize_; i++)
+    for (int i = 0; i < aTable.size(); i++)
     {
         std::cout << " |" << std::endl;
         std::cout << " | --------------------------" << std::endl;
         std::cout << " | ENTRY " << i << std::endl;
         std::cout << " | --------------------------" << std::endl;
         std::cout << " | edgeMin       : ";
-        std::cout << aTable.edgeMin_.at(i) << std::endl;
+        std::cout << aTable.binVector_.at(i).at(0) << std::endl;
         std::cout << " | edgeMax       : ";
-        std::cout << aTable.edgeMax_.at(i) << std::endl;
-        std::cout << " | numberOfNodes : ";
-        std::cout << aTable.numberOfNodes_.at(i) << std::endl;
-        std::cout << " | vectorType    : ";
-        std::cout << aTable.vectorType_.at(i) << std::endl;
-        std::cout << " | binVector      dataVector" << std::endl;
+        std::cout << aTable.binVector_.at(i).at(aTable.binVector_.at(i).size())
+<< std::endl; std::cout << " | numberOfNodes : "; std::cout <<
+aTable.binVector_.at(i).size() << std::endl; std::cout << " | vectorType    :
+"; std::cout << aTable.vector_type_.at(i) << std::endl; std::cout << " |
+binVector      dataVector" << std::endl;
 
         for (int j = 0; j < aTable.binVector_.at(i).size(); j++)
         {
@@ -181,6 +157,7 @@ void GeantImporter::printPhysicsTable(std::string physTableName)
         }
     }
 }
+*/
 
 //---------------------------------------------------------------------------//
 /*!
@@ -203,15 +180,10 @@ ParticleDef GeantImporter::particleDef(ssize_type pdg)
     ParticleDef      particle;
     GeantParticleDef g4particle;
 
-    if (copyParticleDef(pdg, g4particle))
-    {
-        particle.mass           = g4particle.mass();
-        particle.charge         = g4particle.charge();
-        particle.decay_constant = 1. / g4particle.lifetime();
-    }
+    copy_geantParticleDef(pdg, g4particle);
+    particle = particleDef(g4particle);
 
     // TODO: Safeguard if no particle is found
-
     return particle;
 }
 
@@ -223,9 +195,18 @@ ParticleDef GeantImporter::particleDef(GeantParticleDef& g4particle)
 {
     ParticleDef particle;
 
-    particle.mass           = g4particle.mass();
-    particle.charge         = g4particle.charge();
-    particle.decay_constant = 1. / g4particle.lifetime();
+    particle.mass   = g4particle.mass();
+    particle.charge = g4particle.charge();
+
+    if (g4particle.is_stable())
+    {
+        particle.decay_constant = ParticleDef::stable_decay_constant();
+    }
+
+    else
+    {
+        particle.decay_constant = 1. / g4particle.lifetime();
+    }
 
     return particle;
 }
@@ -234,7 +215,7 @@ ParticleDef GeantImporter::particleDef(GeantParticleDef& g4particle)
 std::vector<ParticleDef> GeantImporter::particleDefVector()
 {
     std::vector<ParticleDef> particleVec;
-    ParticleDef particle;
+    ParticleDef              particle;
 
     for (auto gParticleDef : this->particleVector_)
     {
@@ -245,19 +226,17 @@ std::vector<ParticleDef> GeantImporter::particleDefVector()
     return particleVec;
 }
 
-
-//---------------------------------------------------------------------------//
-// PRIVATE
-//---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 /*!
  * Creates a list of all the object names found in the ROOT file
  */
-void GeantImporter::buildObjectsList(TFile* rootFile)
+void GeantImporter::build_objects_list(std::string const root_folder)
 {
+    TDirectory* directory
+        = (TDirectory*)this->root_input_->Get(root_folder.c_str());
+
     // Getting list of keys -- i.e. list of elements in the root input
-    TList* list = rootFile->GetListOfKeys();
+    TList* list = directory->GetListOfKeys();
 
     // Getting list iterator
     TIter iter(list->MakeIterator());
@@ -287,9 +266,10 @@ void GeantImporter::buildObjectsList(TFile* rootFile)
  * Loops over the objects list created by buildObjectsList() to create a
  * vector<GeantParticleDef>.
  */
-void GeantImporter::loadParticleDefsIntoMemory()
+void GeantImporter::load_particleDefs()
 {
-    this->physTableMap_.clear();
+    build_objects_list("particles");
+
     this->particleVector_.clear();
 
     GeantParticleDef thisParticle;
@@ -297,8 +277,11 @@ void GeantImporter::loadParticleDefsIntoMemory()
 
     for (auto particleName : this->objectsList_)
     {
+        std::string particle_path_name = "particles/" + particleName;
+
         TTree* treeParticle
-            = (TTree*)this->rootFile_particleDef_->Get(particleName.c_str());
+            = (TTree*)this->root_input_->Get(particle_path_name.c_str());
+
         treeParticle->SetBranchAddress("name", &branchName);
 
         treeParticle->GetEntry(0);
@@ -309,7 +292,7 @@ void GeantImporter::loadParticleDefsIntoMemory()
         real_type   thisCharge = treeParticle->GetLeaf("charge")->GetValue();
         real_type   thisSpin   = treeParticle->GetLeaf("spin")->GetValue();
         real_type thisLifetime = treeParticle->GetLeaf("lifetime")->GetValue();
-        bool      thisIsStable = treeParticle->GetLeaf("isStable")->GetValue();
+        bool thisIsStable = treeParticle->GetLeaf("is_stable")->GetValue();
 
         thisParticle(thisName,
                      thisPdg,
@@ -328,58 +311,51 @@ void GeantImporter::loadParticleDefsIntoMemory()
  * Loops over the objects list created by buildObjectsList() to create a
  * vector<GeantParticleDef>.
  */
-void GeantImporter::loadPhysicsTablesIntoMemory()
+void GeantImporter::load_physicsTables()
 {
-    GeantPhysicsTable pTable;
+    build_objects_list("tables");
 
-    for (auto tableName : objectsList_)
+    GeantPhysicsTable  pTable;
+    GeantPhysicsVector pVector;
+
+    for (auto table_name : objectsList_)
     {
+        std::string table_path_name = "tables/" + table_name;
         // Creating a tree pointer and getting the tree
-        TTree* tree
-            = (TTree*)this->rootFile_physicsTable_->Get(tableName.c_str());
+        TTree* tree = (TTree*)this->root_input_->Get(table_path_name.c_str());
 
         // For accessing the tree members
-        std::vector<real_type>* readBinVector  = new std::vector<real_type>;
-        std::vector<real_type>* readDataVector = new std::vector<real_type>;
+        std::vector<real_type>* read_energy   = new std::vector<real_type>;
+        std::vector<real_type>* read_xs_eloss = new std::vector<real_type>;
 
-        tree->SetBranchAddress("binVector", &readBinVector);
-        tree->SetBranchAddress("dataVector", &readDataVector);
-
-        // For writing to GeantPhysTable
-        std::vector<real_type> writeBinVector;
-        std::vector<real_type> writeDataVector;
+        tree->SetBranchAddress("energy", &read_energy);
+        tree->SetBranchAddress("xs_eloss", &read_xs_eloss);
 
         // Looping over the tree entries
-        pTable.tableSize_ = tree->GetEntries();
-
-        for (int i = 0; i < pTable.tableSize_; i++)
+        for (int i = 0; i < tree->GetEntries(); i++)
         {
-            // Clearing writing vectors
-            writeBinVector.clear();
-            writeDataVector.clear();
+            // Clearing energy and xs_eloss vectors
+            pVector.energy.clear();
+            pVector.xs_eloss.clear();
 
             // Fetching tree entry
             tree->GetEntry(i);
 
             // Fetching the values of each leaf
-            pTable.edgeMin_.push_back(tree->GetLeaf("edgeMin")->GetValue());
-            pTable.edgeMax_.push_back(tree->GetLeaf("edgeMax")->GetValue());
-            pTable.numberOfNodes_.push_back(
-                tree->GetLeaf("numberOfNodes")->GetValue());
-            pTable.vectorType_.push_back(
-                tree->GetLeaf("vectorType")->GetValue());
+            pVector.vector_type
+                = (GeantPhysicsVectorType)tree->GetLeaf("vectorType")->GetValue();
 
             // Looping over binVector and dataVector
-            for (int j = 0; j < readBinVector->size(); j++)
+            for (int j = 0; j < read_energy->size(); j++)
             {
-                writeBinVector.push_back(readBinVector->at(j));
-                writeDataVector.push_back(readDataVector->at(j));
+                pVector.energy.push_back(read_energy->at(j));
+                pVector.xs_eloss.push_back(read_xs_eloss->at(j));
             }
 
-            pTable.binVector_.push_back(writeBinVector);
-            pTable.dataVector_.push_back(writeDataVector);
+            pTable.physics_vectors.push_back(pVector);
         }
-        this->physTableMap_.emplace(std::make_pair(tableName, pTable));
+        this->physTableMap_.emplace(std::make_pair(table_name, pTable));
+        //std::cout << "Loaded " << table_name << std::endl; 
     }
 }
 

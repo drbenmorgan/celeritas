@@ -6,25 +6,18 @@
 //! \file ActionInitialization.cc
 //---------------------------------------------------------------------------//
 
-
 #include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
 #include "SteppingAction.hh"
 
-
 //---------------------------------------------------------------------------//
 //! Default constructor ad destructor
 //! This class invokes all the remaining classes
-ActionInitialization::ActionInitialization()
-: G4VUserActionInitialization()
-{
-}
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {}
 
-ActionInitialization::~ActionInitialization()
-{
-}
+ActionInitialization::~ActionInitialization() {}
 
 //---------------------------------------------------------------------------//
 //! Constructs and invokes all other Geant4 related classes

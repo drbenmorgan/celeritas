@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "GeantPhysicsVector.hh"
 #include "base/Types.hh"
 
 namespace celeritas
@@ -17,6 +18,8 @@ namespace celeritas
 /*!
  * Struct to store Geant4 asc physics tables.
  */
+
+/*
 struct GeantPhysicsTable
 {
     ssize_type                          tableSize_;
@@ -26,6 +29,12 @@ struct GeantPhysicsTable
     std::vector<ssize_type>             vectorType_;
     std::vector<std::vector<real_type>> binVector_;
     std::vector<std::vector<real_type>> dataVector_;
+};
+*/
+
+struct GeantPhysicsTable
+{
+    std::vector<GeantPhysicsVector> physics_vectors;
 };
 
 //---------------------------------------------------------------------------//

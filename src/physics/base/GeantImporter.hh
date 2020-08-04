@@ -14,8 +14,7 @@
  * Usage:
  * \code
  *  GeantImporter importer;
- *  importer.loadParticleDefRootFile("/path/to/particleDefFile.root");
- *  importer.loadPhysicsTableRootFile("/path/to/physicsTables.root");
+ *  importer.load_root_file("/path/to/physicsTables.root");
  * \endcode
  *
  * These methods will load into memory both particles and physics tables as
@@ -48,7 +47,6 @@
 #include "base/Types.hh"
 #include "base/Macros.hh"
 
-
 // ROOT forward declaration
 class TFile;
 
@@ -63,13 +61,15 @@ class GeantImporter
     ~GeantImporter();
 
     // Loads the ROOT data into memeory
-    void loadParticleDefRootFile(std::string const filename);
-    void loadPhysicsTableRootFile(std::string const filename);
+    void load_root_file(std::string const filename);
+
+    void load_physicsTables();
+    void load_particleDefs();
 
     // Copy the data from memory into an object
-    bool copyParticleDef(ssize_type pdg, GeantParticleDef& g4Particle);
-    bool copyPhysicsTable(std::string        physTableName,
-                          GeantPhysicsTable& physTable);
+    bool copy_geantParticleDef(ssize_type pdg, GeantParticleDef& g4Particle);
+    bool copy_geantPhysicsTable(std::string        physTableName,
+                                GeantPhysicsTable& physTable);
 
     // Print capabilities
     void printObjectsList();
@@ -77,9 +77,9 @@ class GeantImporter
     void printPhysicsTable(std::string physTableName);
     void printPhysicsTableNames();
 
-    // Construct a ParticleDef 
-    ParticleDef particleDef(ssize_type pdg);
-    ParticleDef particleDef(GeantParticleDef& g4particle);
+    // Construct a ParticleDef
+    ParticleDef              particleDef(ssize_type pdg);
+    ParticleDef              particleDef(GeantParticleDef& g4particle);
     std::vector<ParticleDef> particleDefVector();
 
     // Construct a ParticleMd
@@ -87,23 +87,20 @@ class GeantImporter
     ParticleMd particleMd(GeantParticleDef& g4particle);
 
     // Construct a ParticleParams
+    // return std::make_shared<ParticleParams>;
 
     // Construct a Particle
 
   private:
-    void buildObjectsList(TFile* rootFile);
-    void loadPhysicsTablesIntoMemory();
-    void loadParticleDefsIntoMemory();
+    void build_objects_list(std::string const root_folder);
 
   private:
+    std::unique_ptr<TFile> root_input_;
+
     std::vector<std::string>                 objectsList_;
     std::vector<GeantParticleDef>            particleVector_;
     std::map<std::string, GeantPhysicsTable> physTableMap_;
-
-    std::unique_ptr<TFile> rootFile_particleDef_;
-    std::unique_ptr<TFile> rootFile_physicsTable_;
 };
 
 //---------------------------------------------------------------------------//
 } // namespace celeritas
-

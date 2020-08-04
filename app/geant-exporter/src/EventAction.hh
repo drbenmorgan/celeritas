@@ -12,17 +12,14 @@
 #include "G4Event.hh"
 #include "G4UserEventAction.hh"
 
-
 class EventAction : public G4UserEventAction
 {
-public:
- 
+  public:
     EventAction();
     virtual ~EventAction();
-    
-    virtual void  BeginOfEventAction(const G4Event* /*event*/);
-    virtual void  EndOfEventAction(const G4Event* /*event*/);
-    
+
+    virtual void BeginOfEventAction(const G4Event* /*event*/);
+    virtual void EndOfEventAction(const G4Event* /*event*/);
+
     G4ThreeVector RandomUnitaryThreeVector();
 };
-
