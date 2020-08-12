@@ -26,28 +26,22 @@ class GeantPhysicsTableParser
 
     void create_root_file(std::string rootFilename);
     void root_file_name(std::string rootFilename);
-    void add_physics_table(std::string physTableAscFile);
     void add_physics_table(G4VProcess* process, G4ParticleDefinition* particle);
 
   private:
     std::unique_ptr<TFile> root_output_;
     std::string            root_output_filename_;
 
-    int         process_type;
-    std::string process_type_name_;
-    std::string table_type_;
-    std::string process_;
-    std::string model_;
-    std::string particle_;
-    int         table_size_;
-    int         vector_type_;
-    double      edge_min_;
-    double      edge_max_;
-    int         number_of_nodes_;
-    int         size_;
-
-    std::vector<double> energy_;   // Geant4 binVector
-    std::vector<double> xs_eloss_; // Geant4 dataVector
+    int                              process_type_;
+    std::string                      process_type_name_;
+    std::string                      table_type_;
+    std::string                      process_;
+    std::string                      model_;
+    std::string                      particle_;
+    int                              pdg_;
+    std::vector<int>                 vector_type_;
+    std::vector<std::vector<double>> energy_;   // Geant4 binVector
+    std::vector<std::vector<double>> xs_eloss_; // Geant4 dataVector
 
     void write_tree(std::string tree_name, G4PhysicsTable* table);
 };

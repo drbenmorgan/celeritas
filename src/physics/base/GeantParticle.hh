@@ -17,12 +17,12 @@ namespace celeritas
 /*!
  * /brief Stores particle information for the GeantImporter class
  *
- * This class provides the same structure seen in the particleDef.root file
+ * This class provides the same structure seen in the particle.root file
  * created by the app/geant-exporter external code and it is used to load
  * said ROOT data into memory by the GeantImporter class.
  */
 
-class GeantParticleDef
+class GeantParticle
 {
   protected:
     std::string name_;
@@ -34,24 +34,24 @@ class GeantParticleDef
     bool        is_stable_;
 
   public:
-    GeantParticleDef();
-    GeantParticleDef(std::string name,
-                     ssize_type  pdg,
-                     real_type   mass,
-                     real_type   charge,
-                     real_type   spin,
-                     real_type   lifetime,
-                     bool        is_stable);
-    
-    ~GeantParticleDef();
-    
-    GeantParticleDef operator()(std::string name,
-                                ssize_type  pdg,
-                                real_type   mass,
-                                real_type   charge,
-                                real_type   spin,
-                                real_type   lifetime,
-                                bool        is_stable);
+    GeantParticle();
+    GeantParticle(std::string name,
+                  ssize_type  pdg,
+                  real_type   mass,
+                  real_type   charge,
+                  real_type   spin,
+                  real_type   lifetime,
+                  bool        is_stable);
+
+    ~GeantParticle();
+
+    GeantParticle operator()(std::string name,
+                             ssize_type  pdg,
+                             real_type   mass,
+                             real_type   charge,
+                             real_type   spin,
+                             real_type   lifetime,
+                             bool        is_stable);
 
     std::string name();
     ssize_type  pdg();
@@ -60,7 +60,7 @@ class GeantParticleDef
     real_type   spin();
     real_type   lifetime();
     bool        is_stable();
-    
+
     void print();
 };
 

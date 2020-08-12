@@ -11,19 +11,19 @@ namespace celeritas
 {
 //---------------------------------------------------------------------------//
 /*!
- * Geant4 PhysicsVector type enums
+ * Geant4 PhysicsVector type enumerator.
+ * (See Geant4's G4PhysicsVectorType.hh)
  */
 enum GeantPhysicsVectorType
 {
-    Geant4PhysicsVector = 0,
-    Geant4PhysicsLinearVector,
-    Geant4PhysicsLogVector,
-    Geant4PhysicsLnVector,
-    Geant4PhysicsFreeVector,
-    Geant4PhysicsOrderedFreeVector,
-    Geant4LPhysicsFreeVector
+    physics_vector = 0,
+    physics_linear_vector,
+    physics_log_vector,
+    physics_ln_vector,
+    physics_free_vector,
+    physics_ordered_free_vector,
+    lphysics_free_vector
 };
 
 //---------------------------------------------------------------------------//
 } // namespace celeritas
-

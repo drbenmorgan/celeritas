@@ -3,27 +3,34 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 //---------------------------------------------------------------------------//
-//! \file GeantPhysicsVector.hh
+//! \file GeantTableType.hh
 //---------------------------------------------------------------------------//
 #pragma once
-
-#include "GeantPhysicsVectorType.hh"
-#include "base/Types.hh"
 
 namespace celeritas
 {
 //---------------------------------------------------------------------------//
 /*!
- * Struct to store Geant4 physics table data imported from the ROOT file
- * produced by the geant-exporter external app.
+ * /brief Enumerator for the physics table types
+ *
+ * This enum does not exists in Geant4. It was created to safely access
+ * the many tables imported from it.
  */
-struct GeantPhysicsVector
+enum class GeantTableType
 {
-    GeantPhysicsVectorType vector_type;
-    std::vector<real_type> energy;   // Geant4 binVector
-    std::vector<real_type> xs_eloss; // Geant4 dataVector
+    not_defined,
+    DEDX,
+    Ionisation,
+    Range,
+    RangeSec,
+    InverseRange,
+    Lambda,
+    LambdaPrim,
+    LambdaMod1,
+    LambdaMod2,
+    LambdaMod3,
+    LambdaMod4
 };
 
 //---------------------------------------------------------------------------//
 } // namespace celeritas
-

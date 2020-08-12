@@ -60,8 +60,9 @@ endif()
 
 if(CELERITAS_USE_ROOT)
   list(APPEND SOURCES
-    physics/base/GeantParticleDef.cc
+    physics/base/GeantParticle.cc
     physics/base/GeantImporter.cc
+    physics/base/GeantPhysicsTable.cc
   )
   list(APPEND PRIVATE_DEPS ROOT::Core ROOT::Tree)
 endif()

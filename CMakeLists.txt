@@ -73,7 +73,7 @@ if(CELERITAS_USE_CUDA)
 endif()
 
 if(CELERITAS_USE_GEANT4)
-  find_package(GEANT4 REQUIRED)
+  find_package(Geant4 REQUIRED)
 endif()
 
 if(CELERITAS_USE_MPI)

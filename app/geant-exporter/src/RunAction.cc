@@ -9,9 +9,10 @@
 #include "RunAction.hh"
 
 //---------------------------------------------------------------------------//
-//! Constructor and destructor
+/*!
+ * Constructor and destructor
+ */
 RunAction::RunAction() : G4UserRunAction() {}
-
 RunAction::~RunAction() {}
 
 //---------------------------------------------------------------------------//

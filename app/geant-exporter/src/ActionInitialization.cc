@@ -13,14 +13,17 @@
 #include "SteppingAction.hh"
 
 //---------------------------------------------------------------------------//
-//! Default constructor ad destructor
-//! This class invokes all the remaining classes
+/*!
+ * Default constructor ad destructor
+ * This class invokes all the remaining classes
+ */
 ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {}
-
 ActionInitialization::~ActionInitialization() {}
 
 //---------------------------------------------------------------------------//
-//! Constructs and invokes all other Geant4 related classes
+/*!
+ * Constructs and invokes all other Geant4 classes
+ */
 void ActionInitialization::Build() const
 {
     SetUserAction(new PrimaryGeneratorAction());

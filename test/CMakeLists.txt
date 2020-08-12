@@ -86,6 +86,8 @@ set(CELERITASTEST_LINK_LIBRARIES CeleritasPhysicsTest)
 
 celeritas_setup_tests(SERIAL PREFIX physics/base)
 
+celeritas_add_test(physics/base/GeantImporter.test.cc)
+
 add_cudaoptional_test(physics/base/Particle)
 add_cudaoptional_test(physics/base/SecondaryAllocator)
 
@@ -99,7 +101,6 @@ celeritas_add_test(physics/em/KNInteractor.test.cc)
 # END PHYSICS TESTS
 set(CELERITASTEST_LINK_LIBRARIES)
 
-celeritas_add_test(physics/base/GeantImporter.test.cc)
 
 #-----------------------------------------------------------------------------#
 # Random

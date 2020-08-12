@@ -11,7 +11,9 @@
 #include "G4SystemOfUnits.hh"
 
 //---------------------------------------------------------------------------//
-//! Constructor creates a working particle gun for the Geant4 minimal run
+/*!
+ * Constructor creates a working particle gun for the Geant4 minimal run
+ */
 PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(), particle_gun_(nullptr)
 {
@@ -22,7 +24,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     G4ParticleDefinition* particle;
     particle = G4ParticleTable::GetParticleTable()->FindParticle("e-");
 
-    // cms2018.gdml center is at (0, 0, 0)
     G4ThreeVector pos(0, 0, 0);
 
     particle_gun_->SetParticleDefinition(particle);
@@ -32,21 +33,27 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 }
 
 //---------------------------------------------------------------------------//
-//! Destructor deletes up the particle gun pointer
+/*!
+ * Destructor deletes the particle gun pointer
+ */
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
     delete particle_gun_;
 }
 
 //---------------------------------------------------------------------------//
-//! Called at the begining of each event
+/*!
+ * Called at the begining of each event
+ */
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
     particle_gun_->GeneratePrimaryVertex(event);
 }
 
 //---------------------------------------------------------------------------//
-//! Particle gun getter
+/*/
+ * Getter
+ */
 G4ParticleGun* PrimaryGeneratorAction::particle_gun()
 {
     return particle_gun_;

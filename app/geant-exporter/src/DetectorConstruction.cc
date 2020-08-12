@@ -9,7 +9,9 @@
 #include "DetectorConstruction.hh"
 
 //---------------------------------------------------------------------------//
-//! Constructs with a given gdml input file
+/*!
+ * Constructs with a given gdml input file
+ */
 DetectorConstruction::DetectorConstruction(G4String gdmlInput)
     : phys_vol_world_(0)
 {

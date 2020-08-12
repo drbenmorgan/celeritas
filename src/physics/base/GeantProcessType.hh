@@ -3,27 +3,34 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 //---------------------------------------------------------------------------//
-//! \file GeantPhysicsVector.hh
+//! \file GeantProcessType.hh
 //---------------------------------------------------------------------------//
 #pragma once
-
-#include "GeantPhysicsVectorType.hh"
-#include "base/Types.hh"
 
 namespace celeritas
 {
 //---------------------------------------------------------------------------//
 /*!
- * Struct to store Geant4 physics table data imported from the ROOT file
- * produced by the geant-exporter external app.
+ * /brief Enumerator for physics process types
+ *
+ * It is the same enum used in Geant4 (see Geant4's G4ProcessType.hh).
  */
-struct GeantPhysicsVector
+enum class GeantProcessType
 {
-    GeantPhysicsVectorType vector_type;
-    std::vector<real_type> energy;   // Geant4 binVector
-    std::vector<real_type> xs_eloss; // Geant4 dataVector
+    not_defined,
+    transportation,
+    electromagnetic,
+    optical,
+    hadronic,
+    photolepton_hadron,
+    decay,
+    general,
+    parameterisation,
+    user_defined,
+    parallel,
+    phonon,
+    ucn
 };
 
 //---------------------------------------------------------------------------//
 } // namespace celeritas
-

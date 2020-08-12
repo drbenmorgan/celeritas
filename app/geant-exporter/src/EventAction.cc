@@ -9,9 +9,10 @@
 #include "EventAction.hh"
 
 //---------------------------------------------------------------------------//
-//! Default constructor and destructor
+/*!
+ * Default constructor and destructor
+ */
 EventAction::EventAction() : G4UserEventAction() {}
-
 EventAction::~EventAction() {}
 
 //---------------------------------------------------------------------------//

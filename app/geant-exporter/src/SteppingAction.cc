@@ -9,7 +9,9 @@
 #include "SteppingAction.hh"
 
 //---------------------------------------------------------------------------//
-//! Constructor and destructor
+/*!
+ * Constructor and destructor
+ */
 SteppingAction::SteppingAction() : G4UserSteppingAction() {}
 SteppingAction::~SteppingAction() {}
 

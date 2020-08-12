@@ -50,8 +50,6 @@ class ParticleTrackViewTest : public celeritas::Test
              {0.5109989461, -1, ParticleDef::stable_decay_constant()}});
         defs.push_back({{"gamma", pdg::gamma()},
                         {0, 0, ParticleDef::stable_decay_constant()}});
-        defs.push_back(
-            {{"neutron", pdg::neutron()}, {939.565413, 0, 1.0 / 879.4}});
 
         particle_params = std::make_shared<ParticleParams>(std::move(defs));
     }
@@ -66,11 +64,9 @@ TEST_F(ParticleTrackViewTest, params_accessors)
 
     EXPECT_EQ(ParticleDefId(0), defs.find(PDGNumber(11)));
     EXPECT_EQ(ParticleDefId(1), defs.find(PDGNumber(22)));
-    EXPECT_EQ(ParticleDefId(2), defs.find(PDGNumber(2112)));
 
     EXPECT_EQ(ParticleDefId(0), defs.find("electron"));
     EXPECT_EQ(ParticleDefId(1), defs.find("gamma"));
-    EXPECT_EQ(ParticleDefId(2), defs.find("neutron"));
 }
 
 //---------------------------------------------------------------------------//

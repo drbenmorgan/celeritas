@@ -59,110 +59,20 @@ void GeantPhysicsTableParser::root_file_name(std::string rootFilename)
 
 //---------------------------------------------------------------------------//
 /*!
- * Adds a new physics table as a new TTree by providing the asc file
- */
-void GeantPhysicsTableParser::add_physics_table(std::string physTableAscFile)
-{
-    // Opening input
-    std::ifstream inputFile;
-    inputFile.open(physTableAscFile, std::ios::in);
-
-    // Updating the physTableAscFile string to become the TTree name
-    // Removing .asc at the end
-    physTableAscFile.erase(physTableAscFile.length() - 4);
-
-    // Removing the directory path, if any
-    std::size_t lastPathSlash = physTableAscFile.find_last_of("/");
-    physTableAscFile          = physTableAscFile.substr(lastPathSlash + 1);
-
-    // Replacing special characters. ROOT TTrees do not bode well with them
-    replace_characters(physTableAscFile, ".", "_");
-    replace_last_character(physTableAscFile, "+", "Plus");
-    replace_last_character(physTableAscFile, "-", "Minus");
-
-    // Updating root file
-    root_output_
-        = std::make_unique<TFile>(root_output_filename_.c_str(), "update");
-
-    bool        tableExists = root_output_->cd("tables");
-    TDirectory* tables      = nullptr;
-
-    if (!tableExists)
-    {
-        tables = root_output_->mkdir("tables");
-        tables->cd();
-    }
-
-    // Creating the TTree
-    TTree* tree = new TTree(physTableAscFile.c_str(), physTableAscFile.c_str());
-
-    tree->Branch("edgeMin", &edge_min_, "edgeMin/D");
-    tree->Branch("edgeMax", &edge_max_, "edgeMax/D");
-    tree->Branch("numberOfNodes", &number_of_nodes_, "numberOfNodes/I");
-    tree->Branch("vectorType", &vector_type_, "vectorType/I");
-    tree->Branch("binVector", &energy_);
-    tree->Branch("dataVector", &xs_eloss_);
-
-    // Reading file
-    inputFile >> this->table_size_;
-
-    for (int i = 0; i < this->table_size_; i++)
-    {
-        energy_.clear();
-        xs_eloss_.clear();
-
-        inputFile >> this->vector_type_;
-        inputFile >> this->edge_min_ >> this->edge_max_
-            >> this->number_of_nodes_;
-        inputFile >> this->size_;
-
-        if (this->size_ == 0)
-        {
-            std::cout << "Size 0" << std::endl;
-            this->root_output_->Close();
-            inputFile.close();
-            return;
-        }
-
-        double bin, data;
-        for (int j = 0; j < size_; j++)
-        {
-            inputFile >> bin >> data;
-
-            this->energy_.push_back(bin);
-            this->xs_eloss_.push_back(data);
-        }
-        tree->Fill();
-    }
-
-    // Writing and closing files
-    this->root_output_->Write();
-    this->root_output_->Close();
-    inputFile.close();
-
-    std::cout << "  Added " << physTableAscFile << std::endl;
-}
-
-//---------------------------------------------------------------------------//
-/*!
  * Adds a new physics table as a new TTree by providing process and particle
  */
 void GeantPhysicsTableParser::add_physics_table(G4VProcess*           process,
                                                 G4ParticleDefinition* particle)
 {
-    G4ProcessType process_type = process->GetProcessType();
-    process_type_name_         = process->GetProcessTypeName(process_type);
-
-    // Keeping only EM processes/models
-    if (process_type_name_ == "Transportation")
-    {
-        return;
-    }
+    this->process_type_ = process->GetProcessType(); //
+    this->process_type_name_
+        = process->GetProcessTypeName((G4ProcessType)process_type_);
 
     std::string tree_name;
-    particle_ = particle->GetParticleName();
-    process_  = process->GetProcessName();
-    model_    = "NA";
+    this->particle_ = particle->GetParticleName();
+    this->pdg_      = particle->GetPDGEncoding();
+    this->process_  = process->GetProcessName();
+    this->model_    = "NA";
 
     auto em_process          = dynamic_cast<G4VEmProcess*>(process);
     auto eloss_process       = dynamic_cast<G4VEnergyLossProcess*>(process);
@@ -364,9 +274,10 @@ void GeantPhysicsTableParser::write_tree(std::string     tree_name,
                                          G4PhysicsTable* table)
 {
     // Replacing special characters. ROOT TTrees do not bode well with them
-    replace_characters(tree_name, ".", "_");
     replace_last_character(tree_name, "+", "Plus");
     replace_last_character(tree_name, "-", "Minus");
+    replace_characters(tree_name, ".", "_");
+    replace_characters(tree_name, "-", "_");
 
     root_output_
         = std::make_unique<TFile>(root_output_filename_.c_str(), "update");
@@ -387,31 +298,39 @@ void GeantPhysicsTableParser::write_tree(std::string     tree_name,
     // Creating the TTree
     TTree* tree = new TTree(tree_name.c_str(), tree_name.c_str());
 
-    tree->Branch("processType", &process_type, "processType/I");
+    tree->Branch("processType", &process_type_, "processType/I");
     tree->Branch("processTypeName", &process_type_name_);
     tree->Branch("tableType", &table_type_);
     tree->Branch("process", &process_);
     tree->Branch("model", &model_);
     tree->Branch("particle", &particle_);
-    tree->Branch("vectorType", &vector_type_, "vectorType/I");
+    tree->Branch("pdg", &pdg_, "pdg/I");
+    tree->Branch("vectorType", &vector_type_);
     tree->Branch("energy", &energy_);
     tree->Branch("xs_eloss", &xs_eloss_);
+
+    this->vector_type_.clear();
+    this->energy_.clear();
+    this->xs_eloss_.clear();
 
     // G4PhysicsTable is a std::vector<G4PhysicsVector>
     for (auto phys_vector : *table)
     {
-        this->vector_type_ = phys_vector->GetType();
-
-        this->energy_.clear();
-        this->xs_eloss_.clear();
+        std::vector<double> phys_vector_energy;
+        std::vector<double> phys_vector_xs_eloss;
 
         for (std::size_t j = 0; j < phys_vector->GetVectorLength(); j++)
         {
-            this->energy_.push_back(phys_vector->Energy(j));
-            this->xs_eloss_.push_back((*phys_vector)[j]);
+            phys_vector_energy.push_back(phys_vector->Energy(j));
+            phys_vector_xs_eloss.push_back((*phys_vector)[j]);
         }
-        tree->Fill();
+
+        this->vector_type_.push_back(phys_vector->GetType());
+        this->energy_.push_back(phys_vector_energy);
+        this->xs_eloss_.push_back(phys_vector_xs_eloss);
     }
+
+    tree->Fill();
 
     this->root_output_->Write();
     this->root_output_->Close();
@@ -444,7 +363,6 @@ void replace_last_character(std::string&      aString,
                             std::string const search,
                             std::string const replace)
 {
-
     if (aString.back() == search)
     {
         aString.pop_back();

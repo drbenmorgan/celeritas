@@ -41,7 +41,9 @@
 int main(int argc, char** argv)
 {
     //-----------------------------------------------------------------------//
-    //! Minimal help
+    /*!
+     * Minimal help
+     */
     if (argc == 1 || argc != 2)
     {
         G4cout << "Usage: ./geant4-exporter geometry.gdml" << G4endl;
@@ -49,17 +51,23 @@ int main(int argc, char** argv)
     }
 
     //-----------------------------------------------------------------------//
-    //! Starting the run manager
+    /*!
+     * Starting the run manager
+     */
     auto run_manager = new G4RunManager;
 
     //-----------------------------------------------------------------------//
-    //! Fetching the GDML input file and initializing the geometry
+    /*!
+     * Fetching the GDML input file and initializing the geometry
+     */
     std::string gdml_input = argv[argc - 1];
 
     run_manager->SetUserInitialization(new DetectorConstruction(gdml_input));
 
     //-----------------------------------------------------------------------//
-    //! Loading the physics list
+    /*!
+     * Loading the physics list
+     */
     std::vector<G4String>* physics_constructor = new std::vector<G4String>;
     physics_constructor->push_back("G4EmStandardPhysics");
 
@@ -76,12 +84,16 @@ int main(int argc, char** argv)
     run_manager->SetUserInitialization(physics_list);
 
     //-----------------------------------------------------------------------//
-    //! The ActionInitialization class is responsible for calling all the
-    //! remaining geant classes
+    /*!
+     * The ActionInitialization class is responsible for calling all the
+     * remaining geant classes
+     */
     run_manager->SetUserInitialization(new ActionInitialization());
 
     //-----------------------------------------------------------------------//
-    //! Starting a minimal run to produce the physics tables
+    /*!
+     * Starting a minimal run to produce the physics tables
+     */
     auto ui_manager = G4UImanager::GetUIpointer();
     ui_manager->ApplyCommand("/run/initialize");
 
@@ -89,18 +101,20 @@ int main(int argc, char** argv)
 
     //-----------------------------------------------------------------------//
     /*!
-     *  Storing both particle definition information and physics tables
+     * Storing both particle definition information and physics tables
      *
-     *  Code was splitted into two separate loops for simplicity:
-     *  - First loop stores particle info; second stores physics tables
-     *  - Minimal runtime difference penalty in favor of an easier readability
+     * Code was splitted into two separate loops for simplicity:
+     * - First loop stores particle info; second stores physics tables
+     * - Minimal runtime difference penalty in favor of an easier readability
      */
     //-----------------------------------------------------------------------//
 
     auto particle_iterator = G4ParticleTable::GetParticleTable()->GetIterator();
 
     //-----------------------------------------------------------------------//
-    //! LOOP 1: Storing particle information
+    /*!
+     * LOOP 1: Storing particle information
+     */
     //-----------------------------------------------------------------------//
 
     // Creating the particle definition root file
@@ -124,6 +138,18 @@ int main(int argc, char** argv)
     while ((*particle_iterator)())
     {
         G4ParticleDefinition* particle = particle_iterator->value();
+
+        //-------------------------------------------------------------------//
+        /*!
+         * Skipping the Geantino
+         *
+         * Friendly reminder that GenericIon and geantino both have the same
+         * pdg encoding (0). This will crash Celeritas during the creation
+         * of its ParticleParams, which will treat them as a duplicate entry.
+         */
+        //-------------------------------------------------------------------//
+        if (particle->GetParticleName() == "geantino")
+            continue;
 
         name      = particle->GetParticleName();
         pdg       = particle->GetPDGEncoding();
@@ -175,7 +201,9 @@ int main(int argc, char** argv)
     std::cout << std::endl;
 
     //-----------------------------------------------------------------------//
-    //! LOOP 2: Storing physics tables into a ROOT file
+    /*!
+     * LOOP 2: Storing physics tables into a ROOT file
+     */
     //-----------------------------------------------------------------------//
 
     GeantPhysicsTableParser table_parser;
@@ -187,6 +215,10 @@ int main(int argc, char** argv)
     {
         // Fetching particle and its data
         G4ParticleDefinition* particle = particle_iterator->value();
+
+        // See comments in LOOP 1 on why we are skipping the geantino
+        if (particle->GetParticleName() == "geantino")
+            continue;
 
         std::cout << "=============" << std::endl;
         std::cout << particle->GetParticleName() << std::endl;
@@ -206,8 +238,9 @@ int main(int argc, char** argv)
     std::cout << root_output_filename << " done!" << std::endl;
 
     //---------------------------- Job termination --------------------------//
-    /*! User actions, physics list, and detector construction are owned and
-     *  deleted by the run manager
+    /*!
+     * User actions, physics list, and detector construction are owned and
+     * deleted by the run manager
      */
     delete run_manager;
 }
