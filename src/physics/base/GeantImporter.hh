@@ -81,27 +81,22 @@ class GeantImporter
     void print_object_list();
 
     // Copy the data from memory into an object
-    bool get_GeantParticle(ssize_type pdg, GeantParticle& g4Particle);
-    bool get_GeantPhysicsTable(GeantProcessType process_type,
-                               GeantTableType   table_type,
-                               GeantProcess     process,
-                               GeantModel       model,
+    bool get_GeantParticle(PDGNumber pdg, GeantParticle& g4Particle);
+
+    bool get_GeantPhysicsTable(GeantProcessType   process_type,
+                               GeantTableType     table_type,
+                               GeantProcess       process,
+                               GeantModel         model,
                                PDGNumber          pdg,
                                GeantPhysicsTable& physics_table);
 
-    // Construct a ParticleDef
-    ParticleDef              particleDef(ssize_type pdg);
+    // Create ParticleDef
+    ParticleDef              particleDef(PDGNumber pdg);
     ParticleDef              particleDef(GeantParticle& g4particle);
     std::vector<ParticleDef> particleDef_vector();
 
-    // Construct a ParticleMd
-    ParticleMd particleMd(ssize_type pdg);
-    ParticleMd particleMd(GeantParticle& g4particle);
-
-    // Construct a ParticleParams
-     std::shared_ptr<ParticleParams> get_ParticleParams();
-
-    // Construct a Particle
+    // Create ParticleParams
+    std::shared_ptr<ParticleParams> get_ParticleParams();
 };
 
 //---------------------------------------------------------------------------//

@@ -46,37 +46,37 @@ void GeantImporter::load_particle_data()
 
     this->particle_vector_.clear();
 
-    GeantParticle thisParticle;
-    std::string*  branchName = new std::string;
+    GeantParticle particle;
+    std::string*  branch_name = new std::string;
 
-    for (auto particleName : this->object_list_)
+    for (auto particle_name : this->object_list_)
     {
-        std::string particle_path_name = "particles/" + particleName;
+        std::string particle_path_name = "particles/" + particle_name;
 
-        TTree* treeParticle
+        TTree* tree_particle
             = (TTree*)this->root_input_->Get(particle_path_name.c_str());
 
-        treeParticle->SetBranchAddress("name", &branchName);
+        tree_particle->SetBranchAddress("name", &branch_name);
 
-        treeParticle->GetEntry(0);
+        tree_particle->GetEntry(0);
 
-        std::string thisName   = *branchName;
-        ssize_type  thisPdg    = treeParticle->GetLeaf("pdg")->GetValue();
-        real_type   thisMass   = treeParticle->GetLeaf("mass")->GetValue();
-        real_type   thisCharge = treeParticle->GetLeaf("charge")->GetValue();
-        real_type   thisSpin   = treeParticle->GetLeaf("spin")->GetValue();
-        real_type thisLifetime = treeParticle->GetLeaf("lifetime")->GetValue();
-        bool thisIsStable = treeParticle->GetLeaf("is_stable")->GetValue();
+        std::string name     = *branch_name;
+        ssize_type  pdg      = tree_particle->GetLeaf("pdg")->GetValue();
+        real_type   mass     = tree_particle->GetLeaf("mass")->GetValue();
+        real_type   charge   = tree_particle->GetLeaf("charge")->GetValue();
+        real_type   spin     = tree_particle->GetLeaf("spin")->GetValue();
+        real_type   lifetime = tree_particle->GetLeaf("lifetime")->GetValue();
+        bool is_stable       = tree_particle->GetLeaf("is_stable")->GetValue();
 
-        thisParticle(thisName,
-                     thisPdg,
-                     thisMass,
-                     thisCharge,
-                     thisSpin,
-                     thisLifetime,
-                     thisIsStable);
+        particle(name,
+                 pdg,
+                 mass,
+                 charge,
+                 spin,
+                 lifetime,
+                 is_stable);
 
-        this->particle_vector_.push_back(thisParticle);
+        this->particle_vector_.push_back(particle);
     }
 }
 
@@ -91,9 +91,9 @@ void GeantImporter::load_physics_tables()
 
     for (auto table_name : object_list_)
     {
-        GeantPhysicsTable               pTable;
-        GeantPhysicsVector              pVector;
-        std::vector<GeantPhysicsVector> pVectors;
+        GeantPhysicsTable               p_table;
+        GeantPhysicsVector              p_vector;
+        std::vector<GeantPhysicsVector> p_vectors;
 
         std::string table_path_name = "tables/" + table_name;
 
@@ -128,32 +128,32 @@ void GeantImporter::load_physics_tables()
         // Looping over the tree vector data
         for (int i = 0; i < vector_type->size(); i++)
         {
-            pVector.vector_type = (GeantPhysicsVectorType)vector_type->at(i);
+            p_vector.vector_type = (GeantPhysicsVectorType)vector_type->at(i);
 
             // Clearing energy and xs_eloss vectors
-            pVector.energy.clear();
-            pVector.xs_eloss.clear();
+            p_vector.energy.clear();
+            p_vector.xs_eloss.clear();
 
             // Looping over binVector and dataVector
             for (int j = 0; j < read_energy->at(i).size(); j++)
             {
-                pVector.energy.push_back(read_energy->at(i).at(j));
-                pVector.xs_eloss.push_back(read_xs_eloss->at(i).at(j));
+                p_vector.energy.push_back(read_energy->at(i).at(j));
+                p_vector.xs_eloss.push_back(read_xs_eloss->at(i).at(j));
             }
 
-            // pTable.physics_vectors.push_back(pVector);
-            pVectors.push_back(pVector);
+            // p_table.physics_vectors.push_back(p_vector);
+            p_vectors.push_back(p_vector);
         }
 
-        pTable((GeantProcessType)tree->GetLeaf("processType")->GetValue(),
-               pTable.get_table_type(*table_type),
-               pTable.get_process(*process),
-               pTable.get_model(*model),
+        p_table((GeantProcessType)tree->GetLeaf("processType")->GetValue(),
+               p_table.get_table_type(*table_type),
+               p_table.get_process(*process),
+               p_table.get_model(*model),
                *particle,
                tree->GetLeaf("pdg")->GetValue(),
-               pVectors);
+               p_vectors);
 
-        this->physics_table_vector_.push_back(pTable);
+        this->physics_table_vector_.push_back(p_table);
     }
 }
 
@@ -191,13 +191,13 @@ void GeantImporter::print_object_list()
 /*!
  * Copies a particle from the vector into a GeantParticle
  */
-bool GeantImporter::get_GeantParticle(int pdg, GeantParticle& g4Particle)
+bool GeantImporter::get_GeantParticle(PDGNumber pdg, GeantParticle& particle)
 {
-    for (auto particle : this->particle_vector_)
+    for (auto this_particle : this->particle_vector_)
     {
-        if (particle.pdg() == pdg)
+        if (this_particle.pdg() == pdg.get())
         {
-            g4Particle = particle;
+            particle = this_particle;
             return true;
         }
     }
@@ -220,7 +220,7 @@ bool GeantImporter::get_GeantPhysicsTable(GeantProcessType   process_type,
     {
         if (table.process_type() == process_type
             && table.table_type() == table_type && table.process() == process
-            && table.model() == model && table.pdg() == (ssize_type)pdg.get())
+            && table.model() == model && table.pdg() == pdg.get())
         {
             physics_table = table;
             return true;
@@ -233,34 +233,34 @@ bool GeantImporter::get_GeantPhysicsTable(GeantProcessType   process_type,
 /*!
  * Returns a ParticleDef type by providing a PDG number
  */
-ParticleDef GeantImporter::particleDef(ssize_type pdg)
+ParticleDef GeantImporter::particleDef(PDGNumber pdg)
 {
-    ParticleDef   particle;
-    GeantParticle g4particle;
+    ParticleDef   particle_def;
+    GeantParticle geant_particle;
 
-    get_GeantParticle(pdg, g4particle);
-    particle = particleDef(g4particle);
+    get_GeantParticle(pdg, geant_particle);
+    particle_def = particleDef(geant_particle);
 
-    return particle;
+    return particle_def;
 }
 
 //---------------------------------------------------------------------------//
 /*!
  * Returns a ParticleDef type by providing a GeantParticle type
  */
-ParticleDef GeantImporter::particleDef(GeantParticle& g4particle)
+ParticleDef GeantImporter::particleDef(GeantParticle& particle)
 {
-    ParticleDef particle;
+    ParticleDef particle_def;
 
-    particle.mass   = g4particle.mass();
-    particle.charge = g4particle.charge();
+    particle_def.mass   = particle.mass();
+    particle_def.charge = particle.charge();
 
-    if (g4particle.is_stable())
-        particle.decay_constant = ParticleDef::stable_decay_constant();
+    if (particle.is_stable())
+        particle_def.decay_constant = ParticleDef::stable_decay_constant();
     else
-        particle.decay_constant = 1. / g4particle.lifetime();
+        particle_def.decay_constant = 1. / particle.lifetime();
 
-    return particle;
+    return particle_def;
 }
 
 //---------------------------------------------------------------------------//
@@ -269,16 +269,16 @@ ParticleDef GeantImporter::particleDef(GeantParticle& g4particle)
  */
 std::vector<ParticleDef> GeantImporter::particleDef_vector()
 {
-    std::vector<ParticleDef> particleVec;
-    ParticleDef              particle;
+    std::vector<ParticleDef> particle_def_vector;
+    ParticleDef              particle_def;
 
-    for (auto gParticleDef : this->particle_vector_)
+    for (auto geant_particle : this->particle_vector_)
     {
-        particle = this->particleDef(gParticleDef);
-        particleVec.push_back(particle);
+        particle_def = this->particleDef(geant_particle);
+        particle_def_vector.push_back(particle_def);
     }
 
-    return particleVec;
+    return particle_def_vector;
 }
 
 //---------------------------------------------------------------------------//
@@ -295,7 +295,7 @@ std::shared_ptr<ParticleParams> GeantImporter::get_ParticleParams()
         defs.push_back(
             // ParticleMd
             {{particle.name(), PDGNumber{particle.pdg()}},
-            // ParticleDef
+             // ParticleDef
              {particle.mass(),
               particle.charge(),
               (particle.is_stable() ? ParticleDef::stable_decay_constant()
@@ -327,15 +327,15 @@ void GeantImporter::build_object_list(std::string const root_folder)
     {
         // Getting the object's name and type
         TKey*       key     = (TKey*)object;
-        std::string keyName = key->GetName();
-        std::string keyType = key->GetClassName();
+        std::string key_name = key->GetName();
+        std::string key_type = key->GetClassName();
 
         // Safeguard to avoid reading a non-tree object
         // Just in case we add something else to the file in the future
-        if (keyType != "TTree")
+        if (key_type != "TTree")
             continue;
 
-        this->object_list_.push_back(keyName);
+        this->object_list_.push_back(key_name);
     }
 }
 

@@ -49,7 +49,8 @@ TEST_F(GeantImporterTest, particle_electron)
 
     GeantParticle particle;
 
-    EXPECT_TRUE(importer_.get_GeantParticle(11, particle));
+    EXPECT_TRUE(
+        importer_.get_GeantParticle(celeritas::pdg::electron(), particle));
     EXPECT_SOFT_EQ(0.510998910, particle.mass());
     EXPECT_EQ(-1, particle.charge());
     EXPECT_EQ(0.5, particle.spin());
@@ -80,7 +81,7 @@ TEST_F(GeantImporterTest, particle_def_electron)
     importer_.load_root_file(root_file_);
     importer_.load_particle_data();
 
-    ParticleDef particle = importer_.particleDef(11);
+    ParticleDef particle = importer_.particleDef(celeritas::pdg::electron());
 
     EXPECT_SOFT_EQ(0.510998910, particle.mass);
     EXPECT_EQ(-1, particle.charge);
@@ -100,7 +101,7 @@ TEST_F(GeantImporterTest, particle_params_electron)
     EXPECT_GE(particle_params->find(PDGNumber(11)).get(), 0);
 
     ParticleDefId electron_id = particle_params->find(PDGNumber(11));
-    ParticleDef electron = particle_params->get(electron_id);
+    ParticleDef   electron    = particle_params->get(electron_id);
 
     EXPECT_SOFT_EQ(0.510998910, electron.mass);
     EXPECT_EQ(-1, electron.charge);
