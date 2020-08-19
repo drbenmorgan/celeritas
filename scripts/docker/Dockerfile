@@ -92,4 +92,6 @@ RUN cd /opt/spack-environment && spack env activate . \
 RUN cd /opt/spack-environment && \
     spack env activate --sh -d . >> /etc/profile.d/celeritas_spack_env.sh
 
+# TODO: revert to default entrypoint so that commands
+# (e.g. `docker run celeritas/dev:prereq bash`) work correctly
 ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l"]

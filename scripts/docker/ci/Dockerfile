@@ -1,4 +1,4 @@
-FROM  celeritas:dev as builder
+FROM  celeritas/dev:prereq as builder
 
 LABEL maintainer="Seth Johnson <johnsonsr@ornl.gov>" \
       description="Celeritas CI build"
@@ -49,5 +49,3 @@ RUN groupadd -g 999 celeritas && \
     useradd -r -u 999 -g celeritas -d /home/celeritas -m celeritas
 USER celeritas
 WORKDIR /home/celeritas
-
-ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l"]
