@@ -13,7 +13,7 @@ pipeline {
                 stage('cuda-11') {
                     agent {
                         docker {
-                            image 'celeritas/ci:cuda11-2'
+                            image 'celeritas/ci:cuda11-3'
                             // label 'NVIDIA_Tesla_V100-PCIE-32GB && nvidia-docker'
                             label 'sethrj'
                         }
@@ -22,8 +22,6 @@ pipeline {
                         sh 'rm -rf build && mkdir -p build'
                         dir('build') {
                             sh '''
-source /etc/profile
-env
 cmake -G Ninja \
   -DCELERITAS_USE_CUDA:BOOL=ON \
   -DCELERITAS_USE_Geant4:BOOL=ON \
