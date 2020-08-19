@@ -21,10 +21,9 @@ pipeline {
                     steps {
                         sh 'rm -rf build && mkdir -p build'
                         dir('build') {
-                            sh '''
+                            sh '''#/opt/docker/entrypoint.bash
 env
 echo $0
-source /etc/profile
 cmake -G Ninja \
   -DCELERITAS_USE_CUDA:BOOL=ON \
   -DCELERITAS_USE_Geant4:BOOL=ON \
@@ -38,8 +37,8 @@ cmake -G Ninja \
   -DCMAKE_CUDA_FLAGS="-arch=sm_70 -Werror all-warnings" \
   ..
                             '''
-                            sh 'ninja -v'
-                            sh 'ctest $CTEST_ARGS'
+                            sh 'entrypoint-shell ninja -v'
+                            sh 'entrypoint-shell ctest $CTEST_ARGS'
                         }
                     }
                     post {
