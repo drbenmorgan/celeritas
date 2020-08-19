@@ -20,6 +20,7 @@ RUN find -L /opt/view/* -type f -exec readlink -f '{}' \; | \
     awk -F: '{print $1}' | xargs strip -s
 
 # Set up initialization
+# XXX : change from >> to > since this is a duplicate
 RUN cd /opt/spack-environment && \
     spack env activate --sh -d . >> /etc/profile.d/celeritas_spack_env.sh
 
@@ -45,7 +46,15 @@ RUN apt-get -yqq update \
         ssh \
  && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -g 999 celeritas && \
-    useradd -r -u 999 -g celeritas -d /home/celeritas -m celeritas
+# Set up entrypoint and group
+RUN groupadd -g 999 celeritas \
+ && useradd -r -u 999 -g celeritas -d /home/celeritas -m celeritas \
+ && ln -s /opt/docker/entrypoint.bash /usr/local/bin/entrypoint-shell \
+ && ln -s /opt/docker/entrypoint.bash /usr/local/bin/entrypoint-cmd
+COPY entrypoint.bash /opt/docker/entrypoint.bash
+
 USER celeritas
 WORKDIR /home/celeritas
+ENTRYPOINT ["/bin/bash", "/opt/docker/entrypoint.bash"]
+SHELL ["entrypoint-shell"]
+CMD ["entrypoint-cmd"]
