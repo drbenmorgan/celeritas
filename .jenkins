@@ -22,6 +22,9 @@ pipeline {
                         sh 'rm -rf build && mkdir -p build'
                         dir('build') {
                             sh '''
+env
+echo $0
+source /etc/profile
 cmake -G Ninja \
   -DCELERITAS_USE_CUDA:BOOL=ON \
   -DCELERITAS_USE_Geant4:BOOL=ON \
