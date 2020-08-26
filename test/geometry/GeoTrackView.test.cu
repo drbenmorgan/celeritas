@@ -35,7 +35,7 @@ __global__ void vgg_test_kernel(const GeoParamsPointers shared,
     // geo = start[tid.get()];
     for (int seg = 0; seg < max_segments; ++seg)
     {
-        if (geo.boundary() == Boundary::outside)
+        if (geo.is_outside())
             break;
         geo.find_next_step();
 
