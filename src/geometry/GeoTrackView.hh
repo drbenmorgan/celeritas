@@ -53,9 +53,17 @@ class GeoTrackView
     CELER_FUNCTION const Real3& pos() const { return pos_; }
     CELER_FUNCTION const Real3&    dir() const { return dir_; }
     CELER_FUNCTION real_type       next_step() const { return next_step_; }
-    inline CELER_FUNCTION VolumeId volume_id() const;
-    inline CELER_FUNCTION Boundary boundary() const;
     //@}
+
+    /*!
+     * Get the volume ID in the current cell.
+     */
+    inline CELER_FUNCTION VolumeId volume_id() const;
+
+    /*!
+     * Return whether the track is inside or outside the valid geometry region.
+     */
+    CELER_FUNCTION bool is_outside() const { return vgstate_.IsOutside(); }
 
   private:
     //@{

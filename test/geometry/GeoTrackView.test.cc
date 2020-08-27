@@ -107,7 +107,6 @@ TEST_F(GeoTrackViewHostTest, track_line)
         // Track from outside detector, moving right
         geo = {{-6, 0, 0}, {1, 0, 0}};
         EXPECT_EQ(VolumeId{1}, geo.volume_id()); // World
-        EXPECT_EQ(Boundary::inside, geo.boundary());
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(1.0, geo.next_step());
@@ -119,22 +118,24 @@ TEST_F(GeoTrackViewHostTest, track_line)
         EXPECT_SOFT_EQ(10.0, geo.next_step());
         geo.move_next_step();
         EXPECT_EQ(VolumeId{1}, geo.volume_id()); // World
+        EXPECT_EQ(false, geo.is_outside());
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(45.0, geo.next_step());
         geo.move_next_step();
-        EXPECT_EQ(Boundary::outside, geo.boundary());
+        EXPECT_EQ(true, geo.is_outside());
     }
 
     {
         // Track from outside edge fails
         geo = {{50, 0, 0}, {-1, 0, 0}};
-        EXPECT_EQ(Boundary::outside, geo.boundary());
+        EXPECT_EQ(true, geo.is_outside());
     }
 
     {
         // But it works when you move juuust inside
         geo = {{50 - 1e-6, 0, 0}, {-1, 0, 0}};
+        EXPECT_EQ(false, geo.is_outside());
         EXPECT_EQ(VolumeId{1}, geo.volume_id()); // World
         geo.find_next_step();
         EXPECT_SOFT_EQ(45.0 - 1e-6, geo.next_step());
@@ -145,18 +146,18 @@ TEST_F(GeoTrackViewHostTest, track_line)
         // Track from inside detector
         geo = {{0, 0, 0}, {1, 0, 0}};
         EXPECT_EQ(VolumeId{0}, geo.volume_id()); // Detector
-        EXPECT_EQ(Boundary::inside, geo.boundary());
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(5.0, geo.next_step());
         geo.move_next_step();
         EXPECT_SOFT_EQ(5.0, geo.pos()[0]);
         EXPECT_EQ(VolumeId{1}, geo.volume_id()); // World
+        EXPECT_EQ(false, geo.is_outside());
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(45.0, geo.next_step());
         geo.move_next_step();
-        EXPECT_EQ(Boundary::outside, geo.boundary());
+        EXPECT_EQ(true, geo.is_outside());
     }
 }
 

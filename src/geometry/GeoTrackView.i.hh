@@ -106,17 +106,8 @@ CELER_FUNCTION void GeoTrackView::move_next_step()
  */
 CELER_FUNCTION VolumeId GeoTrackView::volume_id() const
 {
-    REQUIRE(this->boundary() == Boundary::inside);
+    REQUIRE(!this->is_outside());
     return VolumeId{this->volume().id()};
-}
-
-//---------------------------------------------------------------------------//
-/*!
- * Return whether the track is inside or outside the valid geometry region.
- */
-CELER_FUNCTION Boundary GeoTrackView::boundary() const
-{
-    return vgstate_.IsOutside() ? Boundary::outside : Boundary::inside;
 }
 
 //---------------------------------------------------------------------------//
