@@ -58,6 +58,13 @@ class GeoTrackView
     CELER_FUNCTION real_type       next_step() const { return next_step_; }
     //@}
 
+    //@{
+    //! State modifiers via non-const references
+    CELER_FUNCTION Real3& pos() { return pos_; }
+    CELER_FUNCTION Real3& dir() { return dir_; }
+    CELER_FUNCTION real_type& next_step() { return next_step_; }
+    //@}
+
     /*!
      * Get the volume ID in the current cell.
      */
