@@ -148,4 +148,30 @@ CELER_FUNCTION const vecgeom::VPlacedVolume& GeoTrackView::volume() const
 }
 
 //---------------------------------------------------------------------------//
+/*!
+ * Check if current step has crossed a boundary, and update navState if
+ * necessary
+ *
+ * //When using the "cuda"-namespace navigation state (i.e., compiling with
+ * NVCC)
+ * //it's necessary to transform the raw data pointer into an index.
+ */
+CELER_FORCEINLINE_FUNCTION
+bool GeoTrackView::has_same_path()
+{
+    //#### NOT USING YET THE NEW NAVIGATORS ####//
+    // TODO: not using the direction yet here !!
+    bool samepath = vecgeom::GlobalLocator::HasSamePath(
+        detail::to_vector(pos_), vgstate_, vgnext_);
+    if (!samepath)
+    {
+#ifdef VECGEOM_CACHED_TRANS
+        vgnext_->UpdateTopMatrix();
+#endif
+        vgnext_.CopyTo(&vgstate_);
+    }
+
+    return samepath;
+}
+
 } // namespace celeritas
