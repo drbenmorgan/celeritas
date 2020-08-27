@@ -48,6 +48,9 @@ class GeoTrackView
     // Move to the next boundary
     inline CELER_FUNCTION void move_next_step();
 
+    // Check for boundary cross in step, update next state if needed
+    CELER_FORCEINLINE_FUNCTION bool has_same_path();
+
     //@{
     //! State accessors
     CELER_FUNCTION const Real3& pos() const { return pos_; }
