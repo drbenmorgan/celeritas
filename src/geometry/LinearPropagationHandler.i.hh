@@ -22,22 +22,21 @@ namespace celeritas
  * otherwise.
  */
 CELER_FORCEINLINE_FUNCTION
-void LinearPropagationHandler::fast_linear_step(GeoTrackView& track,
-                                                real_type     step)
+void LinearPropagationHandler::fast_linear_step(real_type step)
 {
-    axpy(step, track.dir(), &track.pos());
+    axpy(step, track_.dir(), &track_.pos());
 }
 
 //___________________________________________________________________________//
 CELER_FORCEINLINE_FUNCTION
-void LinearPropagationHandler::move_next_step(GeoTrackView& track)
+void LinearPropagationHandler::move_next_step()
 {
     // Scalar geometry length computation. The track is moved along track.dir()
     // direction by a distance track.next_step()
-    this->fast_linear_step(track, track.next_step() + kgeomTolerance);
+    this->fast_linear_step(track_.next_step() + kgeomTolerance);
 
     // ensure this is called at least once to update _vgstate
-    track.has_same_path();
+    track_.has_same_path();
 }
 
 } // namespace celeritas

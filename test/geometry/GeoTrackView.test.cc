@@ -167,7 +167,7 @@ TEST_F(GeoTrackViewHostTest, track_linearPropHandler)
     // Construct geometry interface from persistent geometry data, state view,
     // and thread ID (which for CPU is just zero).
     GeoTrackView             geo(host_view, state_view, ThreadId(0));
-    LinearPropagationHandler propHandler;
+    LinearPropagationHandler propHandler(geo); // one propHandler per track
 
     {
         // Track from outside detector, moving right
@@ -176,19 +176,19 @@ TEST_F(GeoTrackViewHostTest, track_linearPropHandler)
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(1.0, geo.next_step());
-        propHandler.move_next_step(geo);
+        propHandler.move_next_step();
         EXPECT_SOFT_EQ(-5.0, geo.pos()[0]);
         EXPECT_EQ(VolumeId{0}, geo.volume_id()); // Detector
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(10.0, geo.next_step());
-        propHandler.move_next_step(geo);
+        propHandler.move_next_step();
         EXPECT_EQ(VolumeId{1}, geo.volume_id()); // World
         EXPECT_EQ(false, geo.is_outside());
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(45.0, geo.next_step());
-        propHandler.move_next_step(geo);
+        propHandler.move_next_step();
         EXPECT_EQ(true, geo.is_outside());
     }
 
@@ -205,7 +205,7 @@ TEST_F(GeoTrackViewHostTest, track_linearPropHandler)
         EXPECT_EQ(VolumeId{1}, geo.volume_id()); // World
         geo.find_next_step();
         EXPECT_SOFT_EQ(45.0 - 1e-6, geo.next_step());
-        propHandler.move_next_step(geo);
+        propHandler.move_next_step();
         EXPECT_EQ(VolumeId{0}, geo.volume_id()); // Detector
     }
     {
@@ -215,14 +215,14 @@ TEST_F(GeoTrackViewHostTest, track_linearPropHandler)
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(5.0, geo.next_step());
-        propHandler.move_next_step(geo);
+        propHandler.move_next_step();
         EXPECT_SOFT_EQ(5.0, geo.pos()[0]);
         EXPECT_EQ(VolumeId{1}, geo.volume_id()); // World
         EXPECT_EQ(false, geo.is_outside());
 
         geo.find_next_step();
         EXPECT_SOFT_EQ(45.0, geo.next_step());
-        propHandler.move_next_step(geo);
+        propHandler.move_next_step();
         EXPECT_EQ(true, geo.is_outside());
     }
 }
