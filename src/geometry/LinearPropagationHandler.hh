@@ -12,30 +12,23 @@
 
 namespace celeritas
 {
-/**
- * @brief Handler grouping neutral tracks and performing linear propagation.
+/*!
+ * \brief Handler grouping neutral tracks and performing linear propagation.
  */
 
 class LinearPropagationHandler
 {
-  protected:
   private:
-    LinearPropagationHandler(const LinearPropagationHandler&) = delete;
-    LinearPropagationHandler& operator=(const LinearPropagationHandler&)
-        = delete;
-
-    /** @brief fast move, update only position and step */
+    /*!
+     * \brief Fast move, update only the position.
+     */
     CELER_FORCEINLINE_FUNCTION
     void fast_linear_step(GeoTrackView& track, real_type step);
 
   public:
-    /** @brief Default constructor */
-    LinearPropagationHandler() = default;
-
-    /** @briefdestructor */
-    ~LinearPropagationHandler() = default;
-
-    /** @brief Scalar DoIt interface */
+    /*!
+     * \brief Scalar DoIt interface.
+     */
     CELER_FORCEINLINE_FUNCTION
     void move_next_step(GeoTrackView& track);
 };
