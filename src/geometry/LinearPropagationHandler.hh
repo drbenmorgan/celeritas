@@ -13,24 +13,33 @@
 namespace celeritas
 {
 /*!
- * \brief Handler grouping neutral tracks and performing linear propagation.
+ * \brief Handler applying linear propagation to neutral tracks.
  */
-
 class LinearPropagationHandler
 {
+  public:
+    // Construct from persistent and state data
+    CELER_FUNCTION
+    LinearPropagationHandler(GeoTrackView& track) : track_(track) {}
+
+    /*!
+     * \brief Move track across a step.
+     */
+    CELER_FORCEINLINE_FUNCTION
+    void move_next_step();
+
   private:
     /*!
      * \brief Fast move, update only the position.
      */
     CELER_FORCEINLINE_FUNCTION
-    void fast_linear_step(GeoTrackView& track, real_type step);
+    void fast_linear_step(real_type step);
 
-  public:
-    /*!
-     * \brief Scalar DoIt interface.
-     */
-    CELER_FORCEINLINE_FUNCTION
-    void move_next_step(GeoTrackView& track);
+  private:
+    //@{
+    //! Referenced thread-local data
+    GeoTrackView& track_;
+    //@}
 };
 
 } // namespace celeritas
