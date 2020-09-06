@@ -15,6 +15,7 @@ add_library(CeleritasTest
   gtest/detail/ParallelHandler.cc
   gtest/detail/TestMain.cc
   gtest/detail/Utils.cc
+  geometry/GeoParamsTest.cc
   "${CMAKE_CURRENT_BINARY_DIR}/TestConfig.cc"
 )
 add_library(Celeritas::Test ALIAS CeleritasTest)
@@ -84,6 +85,7 @@ if(CELERITAS_USE_VecGeom)
   celeritas_setup_tests(SERIAL PREFIX geometry
     LINK_LIBRARIES VecGeom::vecgeom)
 
+  celeritas_add_test(geometry/GeoParams.test.cc)
   celeritas_add_test(geometry/GeoTrackView.test.cc)
 
   # CUDA tests: link cuda sources as needed

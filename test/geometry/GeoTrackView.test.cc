@@ -13,47 +13,16 @@
 #include "gtest/Test.hh"
 #include "geometry/GeoParams.hh"
 #include "geometry/GeoStateStore.hh"
-#include "geometry/LinearPropagationHandler.hh"
-#include "GeoTrackView.test.hh"
+#include "GeoParamsTest.hh"
 
 using namespace celeritas;
 using namespace celeritas_test;
 
 //---------------------------------------------------------------------------//
-// TEST HARNESS
-//---------------------------------------------------------------------------//
-
-class GeoTrackViewTest : public celeritas::Test
-{
-  protected:
-    using SptrConstParams = std::shared_ptr<const GeoParams>;
-
-    static void SetUpTestCase()
-    {
-        std::string test_file
-            = celeritas::Test::test_data_path("geometry", "twoBoxes.gdml");
-        geom_ = std::make_shared<GeoParams>(test_file.c_str());
-    }
-
-    static void TearDownTestCase() { geom_.reset(); }
-
-    const SptrConstParams& params()
-    {
-        ENSURE(geom_);
-        return geom_;
-    }
-
-  private:
-    static SptrConstParams geom_;
-};
-
-GeoTrackViewTest::SptrConstParams GeoTrackViewTest::geom_ = nullptr;
-
-//---------------------------------------------------------------------------//
 // HOST TESTS
 //---------------------------------------------------------------------------//
 
-class GeoTrackViewHostTest : public GeoTrackViewTest
+class GeoTrackViewHostTest : public GeoParamsTest
 {
   public:
     using NavState = vecgeom::cxx::NavigationState;
