@@ -115,6 +115,9 @@ celeritas_setup_tests(SERIAL PREFIX io LINK_LIBRARIES Celeritas::IO)
 
 if(CELERITAS_USE_ROOT)
   celeritas_add_test(io/GeantImporter.test.cc)
+  celeritas_add_test(io/GeantModel.test.cc)
+  celeritas_add_test(io/GeantProcess.test.cc)
+  celeritas_add_test(io/GeantTableType.test.cc)
 endif()
 
 #-----------------------------------------------------------------------------#
