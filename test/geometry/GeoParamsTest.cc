@@ -6,6 +6,6 @@
 //! \file GeoParamsTest.cc
 //---------------------------------------------------------------------------//
 
-#include "geometry/GeoParamsTest.hh"
+#include "GeoParamsTest.hh"
 
 celeritas_test::GeoParamsTest::SptrConstParams celeritas_test::GeoParamsTest::geom_ = nullptr;

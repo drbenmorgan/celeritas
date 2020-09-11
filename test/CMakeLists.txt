@@ -85,8 +85,9 @@ if(CELERITAS_USE_VecGeom)
   celeritas_setup_tests(SERIAL PREFIX geometry
     LINK_LIBRARIES VecGeom::vecgeom)
 
-  #celeritas_add_test(geometry/GeoParams.test.cc)
+  celeritas_add_test(geometry/GeoParams.test.cc)
   celeritas_add_test(geometry/GeoTrackView.test.cc)
+  celeritas_add_test(geometry/LinearPropagationHandler.test.cc)
 
   # CUDA tests: link cuda sources as needed
   if(CELERITAS_USE_CUDA)
@@ -94,9 +95,7 @@ if(CELERITAS_USE_VecGeom)
     # discussion of the failures from trying to directly build an executable
     # from code with CUDA separable compilation. This extra test library is
     # necessary.
-    add_library(celeritas_vgtest geometry/GeoTrackView.test.cu
-    #geometry/GeoParams.test.cu
-    )
+    add_library(celeritas_vgtest geometry/GeoTrackView.test.cu geometry/GeoParams.test.cu geometry/GeoParamsTest.cc)
     target_link_libraries(celeritas_vgtest
       PRIVATE
       celeritas
@@ -108,7 +107,7 @@ if(CELERITAS_USE_VecGeom)
       CUDA_SEPARABLE_COMPILATION ON
       POSITION_INDEPENDENT_CODE ON
     )
-    #target_link_libraries(geometry_GeoParams celeritas_vgtest)
+    target_link_libraries(geometry_GeoParams celeritas_vgtest)
     target_link_libraries(geometry_GeoTrackView celeritas_vgtest)
   endif()
 endif()
