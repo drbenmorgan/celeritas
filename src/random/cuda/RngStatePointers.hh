@@ -32,6 +32,9 @@ struct RngSeed
 struct RngStatePointers
 {
     span<RngState> rng;
+
+    //! Number of tracks
+    CELER_FUNCTION size_type size() const { return rng.size(); }
 };
 
 //---------------------------------------------------------------------------//
