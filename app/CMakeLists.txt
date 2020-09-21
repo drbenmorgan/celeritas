@@ -63,9 +63,11 @@ endif()
 if(CELERITAS_BUILD_DEMOS AND CELERITAS_USE_CUDA)
   add_executable(demo-interactor
     demo-interactor/demo-interactor.cc
+    demo-interactor/LoadXs.cc
     demo-interactor/KNDemoIO.cc
     demo-interactor/KNDemoRunner.cc
     demo-interactor/KNDemoKernel.cu
+    demo-interactor/PhysicsArrayParams.cc
   )
   target_link_libraries(demo-interactor celeritas
     CUDA::cudart

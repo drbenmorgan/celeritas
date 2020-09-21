@@ -9,11 +9,14 @@
 
 #include <thrust/device_ptr.h>
 #include <thrust/reduce.h>
+#include "base/ArrayUtils.hh"
 #include "base/Assert.hh"
 #include "physics/base/ParticleTrackView.hh"
 #include "physics/base/SecondaryAllocatorView.hh"
 #include "physics/em/KleinNishinaInteractor.hh"
 #include "random/cuda/RngEngine.cuh"
+#include "random/distributions/ExponentialDistribution.hh"
+#include "PhysicsArrayCalculator.hh"
 
 using namespace celeritas;
 
@@ -67,6 +70,7 @@ __global__ void iterate_kn(ParamPointers const              params,
                            real_type* const                 energy_deposition)
 {
     SecondaryAllocatorView allocate_secondaries(secondaries);
+    PhysicsArrayCalculator calc_xs(params.xs);
 
     for (int tid = blockIdx.x * blockDim.x + threadIdx.x;
          tid < static_cast<int>(states.size());
@@ -86,11 +90,16 @@ __global__ void iterate_kn(ParamPointers const              params,
             params.particle, states.particle, ThreadId(tid));
         RngEngine rng(states.rng, ThreadId(tid));
 
-        /*! TODO:
-         * - calculate mean free path
-         * - sample distance to collision
-         * - move (update position, time)
-         */
+        // Move to collision
+        {
+            // Calculate cross section at the particle's energy
+            real_type                          sigma = calc_xs(particle);
+            ExponentialDistribution<real_type> sample_distance(sigma);
+            // Sample distance-to-collision
+            real_type distance = sample_distance(rng);
+            // Move particle
+            axpy(distance, states.direction[tid], &states.position[tid]);
+        }
 
         if (particle.energy() < KleinNishinaInteractor::min_incident_energy())
         {

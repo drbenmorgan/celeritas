@@ -7,7 +7,7 @@ set_cache_var(CELERITAS_USE_CUDA BOOL ON)
 set_cache_var(CELERITAS_USE_Geant4 BOOL OFF)
 set_cache_var(CELERITAS_USE_MPI BOOL ON)
 set_cache_var(CELERITAS_USE_ROOT BOOL ON)
-set_cache_var(CELERITAS_USE_VecGeom BOOL ON)
+set_cache_var(CELERITAS_USE_VecGeom BOOL OFF)
 set_cache_var(CELERITAS_GIT_SUBMODULE BOOL OFF)
 
 # set_cache_var rpath based on environment (loaded Spack modules); VecGeom does not

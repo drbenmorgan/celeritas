@@ -22,11 +22,15 @@ namespace demo_interactor
 /*!
  * Construct with parameters.
  */
-KNDemoRunner::KNDemoRunner(constSPParticleParams particles,
-                           CudaGridParams        solver)
-    : pparams_(std::move(particles)), launch_params_(std::move(solver))
+KNDemoRunner::KNDemoRunner(constSPParticleParams     particles,
+                           constSPPhysicsArrayParams xs,
+                           CudaGridParams            solver)
+    : pparams_(std::move(particles))
+    , xsparams_(std::move(xs))
+    , launch_params_(std::move(solver))
 {
     REQUIRE(pparams_);
+    REQUIRE(xsparams_);
     REQUIRE(launch_params_.block_size > 0);
     REQUIRE(launch_params_.grid_size > 0);
 
@@ -72,6 +76,7 @@ auto KNDemoRunner::operator()(KNDemoRunArgs args) -> result_type
     // Construct pointers to device data
     ParamPointers params;
     params.particle      = pparams_->device_pointers();
+    params.xs            = xsparams_->device_pointers();
     params.kn_interactor = kn_pointers_;
 
     InitialPointers initial;

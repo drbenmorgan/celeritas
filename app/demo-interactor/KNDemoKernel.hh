@@ -14,6 +14,7 @@
 #include "physics/base/SecondaryAllocatorPointers.hh"
 #include "physics/em/KleinNishinaInteractorPointers.hh"
 #include "random/cuda/RngStatePointers.hh"
+#include "PhysicsArrayPointers.hh"
 
 namespace demo_interactor
 {
@@ -29,7 +30,13 @@ struct CudaGridParams
 struct ParamPointers
 {
     celeritas::ParticleParamsPointers         particle;
+    celeritas::PhysicsArrayPointers           xs;
     celeritas::KleinNishinaInteractorPointers kn_interactor;
+
+    explicit CELER_FUNCTION operator bool() const
+    {
+        return particle && xs && kn_interactor;
+    }
 };
 
 //! Pointers to initial conditoins
@@ -47,6 +54,12 @@ struct StatePointers
     celeritas::span<celeritas::Real3>     direction;
     celeritas::span<celeritas::real_type> simtime;
     celeritas::span<bool>                 alive;
+
+    explicit CELER_FUNCTION operator bool() const
+    {
+        return particle && rng && !position.empty() && !direction.empty()
+               && !simtime.empty() && !alive.empty();
+    }
 
     //! Number of tracks
     CELER_FUNCTION celeritas::size_type size() const
