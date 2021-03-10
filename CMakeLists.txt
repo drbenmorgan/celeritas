@@ -100,6 +100,11 @@ if(CELERITAS_USE_Geant4)
   celeritas_find_package_config(Geant4 REQUIRED)
 endif()
 
+# NB: To check: Geant4 can provide its own zlib (G4zlib)
+# This *may* conflict in applications if both Geant4 libs
+# and Zlib are linked together.
+find_package(ZLIB REQUIRED)
+
 if(CELERITAS_USE_HepMC3)
   celeritas_find_package_config(HepMC3 REQUIRED)
   # HepMC3's cmake config file does not provide an imported target yet

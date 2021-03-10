@@ -18,6 +18,7 @@ spack:
 
   - veccore
   - vecgeom +gdml
+  - zlib
   concretization: together
   packages:
     cuda:

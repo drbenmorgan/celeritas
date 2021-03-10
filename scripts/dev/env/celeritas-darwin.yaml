@@ -19,6 +19,7 @@ spack:
     
   - veccore
   - vecgeom +gdml
+  - zlib
   view: true
   concretization: together
   packages:

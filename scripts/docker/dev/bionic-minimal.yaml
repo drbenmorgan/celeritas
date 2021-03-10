@@ -19,6 +19,7 @@ spack:
 
 
   - valgrind
+  - zlib
   concretization: together
   packages:
     valgrind:
