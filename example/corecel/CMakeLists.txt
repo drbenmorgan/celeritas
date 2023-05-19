@@ -12,4 +12,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 find_package(Celeritas REQUIRED)
 
 add_executable(collection collection.cc)
-target_link_libraries(collection PRIVATE Celeritas::celeritas)
+target_link_libraries(collection PRIVATE Celeritas::corecel)
+
+if(CELERITAS_USE_CUDA OR CELERITAS_USE_HIP)
+  add_executable(saxpy_devicevector saxpy_devicevector.cc saxpy.hh saxpy.cu)
+  target_link_libraries(saxpy_devicevector PRIVATE Celeritas::corecel)
+endif()
